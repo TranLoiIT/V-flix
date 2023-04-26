@@ -1,0 +1,12 @@
+.ratingStar {
+  @apply flex;
+  &-wrapper {
+    @apply relative;
+    .ratingStar--red {
+      @apply overflow-hidden text-red-primary absolute top-0 left-0 z-1;
+    }
+    .ratingStar--gray {
+      @apply text-gray-primary;
+    }
+  }
+}

@@ -1,0 +1,95 @@
+.navbar__wrap {
+  .navbar {
+    &__right {
+      .navbar__btn {
+        @apply text-white;
+        @apply rounded-md;
+      }
+      &-menuUser {
+        &::after {
+          content: '';
+          @apply absolute right-2.5rem -top-2rem;
+          border-top: 10px solid transparent;
+          border-left: 10px solid transparent;
+          border-right: 10px solid transparent;
+          border-bottom: 10px solid rgb(255, 255, 255);
+        }
+      }
+    }
+    .navbar__menu--tablet {
+      &-icon {
+        &,
+        &::before,
+        &::after {
+          @apply bg-white inline-block w-full h-0.25rem;
+        }
+
+        &::before,
+        &::after {
+          content: '';
+          @apply absolute left-0 transition-all duration-200;
+        }
+
+        &::before {
+          @apply -top-0.8rem sm:-top-0.8rem;
+        }
+
+        &::after {
+          @apply top-0.8rem sm:top-0.8rem;
+        }
+      }
+      &.checked .navbar__menu--tablet-icon {
+        @apply bg-transparent;
+      }
+
+      &.checked .navbar__menu--tablet-icon::before {
+        @apply top-0 transform rotate-135;
+      }
+
+      &.checked .navbar__menu--tablet-icon::after {
+        @apply top-0 transform -rotate-135;
+      }
+    }
+
+    &__tablet-list {
+      @apply absolute top-full left-0 right-0 bg-red-primary flex flex-col z-1 opacity-0 invisible transition-all duration-200 py-2 sm:py-4;
+      &.showMenuTablet {
+        @apply opacity-100 visible;
+      }
+      .navbar__tablet-item {
+        @apply ml-0;
+      }
+    }
+
+    &__tablet-link {
+      @apply text-24 text-white inline-block w-full z-10 h-full py-2 sm:py-4;
+      &:hover {
+        .navbar__link-text::after {
+          @apply opacity-100;
+        }
+      }
+      &-text {
+        @apply relative;
+        @apply inline-block;
+        @apply z-10;
+        &::after {
+          content: '';
+          opacity: 0;
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 10%;
+          top: 70%;
+          background-color: #f37323;
+          @apply z-negative1;
+          transition: 0.1s all linear;
+        }
+        &.showUnderline {
+          &::after {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+}

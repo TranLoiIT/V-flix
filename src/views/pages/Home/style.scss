@@ -1,0 +1,14 @@
+.home::-webkit-scrollbar {
+  width: 10px;
+}
+
+.home::-webkit-scrollbar-track {
+  background-color: #141414;
+  position: fixed;
+}
+
+/* Handle */
+.home::-webkit-scrollbar-thumb {
+  @apply bg-red-primary;
+  border-radius: 10px;
+}

@@ -1,0 +1,89 @@
+@import 'assets/styles/theme/mixin';
+
+.banner {
+  @apply overflow-hidden relative h-56.25vw;
+  &:hover {
+    .banner__slider-control {
+      @apply opacity-100 visible;
+    }
+  }
+  &__slider {
+    @apply flex h-full;
+    &-item-over {
+      .display-text-group {
+        @apply text-24 text-white w-100rem;
+      }
+    }
+    &-rating {
+      @apply text-26;
+      &:not(:last-child) {
+        @apply mr-0.6rem;
+      }
+    }
+  }
+  &__slider-control {
+    @apply opacity-0 invisible transition-all duration-200;
+    &-next,
+    &-previous {
+      @apply flex items-center justify-center absolute top-1/2 transform -translate-y-1/2 border-none bg-transparent w-6rem h-6rem rounded-full transition-all duration-200 ease-in-out;
+      @include respond(phone) {
+        @apply w-4rem h-4rem;
+      }
+      svg {
+        width: 4.5rem !important;
+        height: 4.5rem;
+        @apply text-red-primary;
+        @include respond(phone) {
+          width: 3rem !important;
+          height: 3rem;
+        }
+      }
+      &:hover {
+        @apply bg-white bg-opacity-40;
+        @include respond(tablet) {
+          @apply bg-transparent;
+        }
+      }
+      &:focus {
+        @apply outline-none;
+      }
+    }
+    &-next {
+      @apply right-1rem;
+      @include respond(phone) {
+        @apply right-1.5rem;
+      }
+    }
+    &-previous {
+      @apply left-1rem;
+      @include respond(phone) {
+        @apply left-1.5rem;
+      }
+    }
+    &-indicators {
+      @apply m-0 p-0 flex absolute bottom-10rem left-1/2 transform -translate-x-1/2;
+      @include respond(phone) {
+        @apply bottom-5rem;
+      }
+      @include respond(md-desktop) {
+        @apply bottom-30rem;
+      }
+      @include respond(big-desktop) {
+        @apply bottom-30rem;
+      }
+      .banner__slider-control-dot {
+        @apply cursor-pointer list-none;
+        &:not(:last-child) {
+          @apply mr-2rem;
+        }
+        svg {
+          @apply text-red-primary;
+          @include respond(phone) {
+            width: 1rem !important;
+            height: 1rem;
+          }
+        }
+      }
+    }
+  }
+}

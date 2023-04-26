@@ -1,0 +1,27 @@
+@import '../assets/styles/theme/variables';
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-family: 'Netflix Sans', Arial, Helvetica, sans-serif;
+  overflow: auto;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background-color: #141414;
+  position: fixed;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  @apply bg-red-primary;
+  border-radius: 10px;
+}

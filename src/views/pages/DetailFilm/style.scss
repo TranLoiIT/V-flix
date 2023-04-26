@@ -1,0 +1,10 @@
+.detailFilm {
+  &__info {
+    &-left-top-star {
+      @apply text-18 sm:text-22;
+      &:not(:last-child) {
+        @apply mr-0.6rem;
+      }
+    }
+  }
+}

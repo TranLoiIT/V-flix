@@ -1,0 +1,9 @@
+.gallery {
+  &__link {
+    &-item {
+      img {
+        @apply w-full h-full object-cover;
+      }
+    }
+  }
+}

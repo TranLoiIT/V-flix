@@ -1,0 +1,70 @@
+.listUsers {
+  @apply flex flex-col;
+  &__wrapTable {
+    @apply overflow-y-scroll;
+    &::-webkit-scrollbar {
+      -webkit-appearance: none;
+      width: 0.8rem;
+    }
+    &::-webkit-scrollbar-thumb {
+      @apply bg-red-primary rounded-full;
+      box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+    }
+  }
+  &__table--img {
+    img {
+      @apply w-full h-full object-cover;
+    }
+  }
+  table {
+    thead {
+      th {
+        @apply text-16 text-white py-4 bg-black-navbar;
+      }
+    }
+    tbody {
+      tr {
+        td {
+          &:not(:first-child) {
+            @apply p-4;
+          }
+        }
+        &:nth-child(even) {
+          @apply bg-gray-primary-d;
+          td {
+            @apply text-14 text-white align-top;
+
+            &:nth-child(3),
+            &:nth-child(6) {
+              &::-webkit-scrollbar-track {
+                @apply bg-gray-primary-d;
+              }
+              &::-webkit-scrollbar {
+                -webkit-appearance: none;
+                @apply w-2;
+              }
+              &::-webkit-scrollbar-thumb {
+                @apply bg-red-primary rounded-full;
+              }
+            }
+          }
+        }
+        &:nth-child(odd) {
+          td {
+            @apply text-14 text-white align-top;
+            &:nth-child(3),
+            &:nth-child(6) {
+              &::-webkit-scrollbar {
+                -webkit-appearance: none;
+                @apply w-2;
+              }
+              &::-webkit-scrollbar-thumb {
+                @apply bg-red-primary rounded-full;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

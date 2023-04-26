@@ -1,0 +1,10 @@
+.sidebarAdmin {
+  &::-webkit-scrollbar {
+    @apply w-0;
+  }
+  &__item {
+    a {
+      @apply block px-8 py-6 flex items-center;
+    }
+  }
+}

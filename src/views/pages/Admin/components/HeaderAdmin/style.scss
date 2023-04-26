@@ -1,0 +1,41 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 40px;
+  border-bottom: 1px solid #aaa;
+  box-shadow: 0px 1px 10px 1px #aaa;
+  &-left {
+    cursor: pointer;
+    img {
+      height: 30px;
+    }
+  }
+  &-right {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    .header__admin {
+      margin: 0;
+      margin-right: 20px;
+      color: #3795da;
+    }
+    .logout {
+      font-size: 20px;
+      font-weight: bold;
+      color: #999;
+      border: none;
+      background-color: transparent;
+      transition: all 0.2s;
+      cursor: pointer;
+      &:focus,
+      &:active {
+        outline: none;
+      }
+      &:hover {
+        color: #333;
+      }
+    }
+  }
+}
