@@ -228,3 +228,15 @@ const User = () => {
 };
 
 export default User;
+
+
+// SERVER_API_URL=
+// SERVER_API_PREFIX=
+
+// NODE_ENV=
+
+// PUBLIC_URL=
+
+// REACT_APP_BASE_API_PREFIX='http://localhost:9000/'
+
+// REACT_APP_GOOGLE_CLIENT_ID="751886179657-ivb1fuvbm0dfo1gqh8i7lifsped1b4r3.apps.googleusercontent.com"

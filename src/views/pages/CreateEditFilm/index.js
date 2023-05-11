@@ -427,9 +427,10 @@ const CreateEditFilm = () => {
                 placeholder='Chọn Poster'
                 width='w-14rem'
                 setState={(value) => {
+                  console.log("value::", value);
                   setState((newState) => ({
                     ...newState,
-                    posterFilm: value,
+                    posterFilm: `${process.env.REACT_APP_BASE_API_PREFIX}${value?.path}` ?? '',
                   }));
                 }}
                 styleContainer='mr-6'
@@ -443,7 +444,7 @@ const CreateEditFilm = () => {
                 setState={(value) => {
                   setState({
                     ...state,
-                    bannerFilm: value,
+                    bannerFilm: `${process.env.REACT_APP_BASE_API_PREFIX}${value?.path}` ?? '',
                   });
                 }}
                 styleContainer='mr-6'
