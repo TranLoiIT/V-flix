@@ -28,7 +28,7 @@ const Gallery = (props) => {
       {films.map((film) => (
         <li
           key={film._id}
-          className={`gallery transition duration-200 transform origin-center xl:hover:scale-125 hover:z-1 first:origin-left last:origin-right ${
+          className={`gallery transition duration-200 transform origin-center xl:hover:scale-125 hover:z-1 first:origin-left last:origin-right mx-3 ${
             related ? 'mb-8' : null
           }`}
           style={{

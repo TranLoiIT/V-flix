@@ -77,7 +77,6 @@ const Banner = (props) => {
     return () => clearInterval(debounce.current);
     // eslint-disable-next-line
   }, []);
-
   return (
     <>
       <div className='banner mb-3rem' {...handlers(slide)}>
@@ -89,7 +88,7 @@ const Banner = (props) => {
             transition='all 0.6s ease-in-out'
             length={numItems}
           >
-            {[films || []].slice(0, 4).map((film, index) => {
+            {(films || []).slice(0, 4).map((film, index) => {
               const { _id, slug, bannerFilm } = film;
               return (
                 <Link
@@ -112,7 +111,7 @@ const Banner = (props) => {
                 >
                   <img
                     className='w-full h-full object-cover'
-                    src={bannerFilm}
+                    src={`${process.env.REACT_APP_BASE_API_PREFIX}${bannerFilm}`}
                     alt='banner'
                   />
                   <div className='opacity-0 banner__slider-item-over flex-col justify-end bg-black absolute w-full h-full top-0 bg-opacity-60 pl-8rem pb-35rem transition duration-300 group-hover:opacity-100 hidden xl:flex'>

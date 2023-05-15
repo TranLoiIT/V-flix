@@ -21,10 +21,14 @@ const HomePage = (props) => {
 
   useEffect(() => {
     (async function () {
-      setLoading(true);
-      const responseAll = await getFilmsFilterApi('');
-      setData(responseAll.data);
-      setLoading(false);
+      try {
+        setLoading(true);
+        const responseAll = await getFilmsFilterApi('');
+        setData(responseAll.data);
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+      }
     })();
     // eslint-disable-next-line
   }, []);
@@ -32,8 +36,12 @@ const HomePage = (props) => {
   useEffect(() => {
     (async function () {
       if (isAuthenticated) {
-        const responseAll = await getFilmsRecentApi(user.get('history').toJS());
-        setRecent(responseAll.data);
+        try {
+          const responseAll = await getFilmsRecentApi(user.get('history').toJS());
+          setRecent(responseAll.data);
+        } catch (error) {
+          console.log(error);
+        }
       }
     })();
     // eslint-disable-next-line

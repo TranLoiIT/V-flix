@@ -20,20 +20,20 @@ const InputImageFile = (props) => {
   const imagePreview = (param) => {
     return (
       <div className={`addEdit_imagePreview ${width}`}>
-        <img src={param} alt='preview' className='w-full' />
+        <img src={`${process.env.REACT_APP_BASE_API_PREFIX}${param}`} alt='preview' className='w-full' />
       </div>
     );
   };
 
   console.log(value, 'value');
 
-  const previewFile = (file) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setImage(reader.result)
-    };
-  };
+  // const previewFile = (file) => {
+  //   const reader = new FileReader();
+  //   reader.readAsDataURL(file);
+  //   reader.onloadend = () => {
+  //     setImage(reader.result)
+  //   };
+  // };
   const handleUpload = async (formData) => {
     try {
       const res = await axios({
@@ -43,7 +43,7 @@ const InputImageFile = (props) => {
         headers: { "Content-Type": "multipart/form-data" },
       })
       setState(res.data);
-      
+      setImage(res?.data?.path || '')
     } catch (error) {
       console.log(error)
     }
@@ -52,7 +52,7 @@ const InputImageFile = (props) => {
 
   const handleOnChange = (e) => {
     const file = e.currentTarget.files[0];
-    previewFile(file);
+    // previewFile(file);
     let formData = new FormData()
     formData.append('file', e.currentTarget.files[0]);
     handleUpload(formData)

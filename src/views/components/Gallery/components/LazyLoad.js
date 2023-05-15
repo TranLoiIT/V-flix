@@ -19,11 +19,12 @@ const LazyLoad = (props) => {
         src={
           error
             ? 'https://res.cloudinary.com/nghiemduong2000/image/upload/v1621406568/VMOflix%20Project/VMOflix%20-%20base/488px-No-Image-Placeholder.svg_zn1ra0.png'
-            : film.posterFilm
+            : `${process.env.REACT_APP_BASE_API_PREFIX}${film.posterFilm}`
         }
         wrapperClassName='gallery__link-item gallery-img-wrapper w-full h-full absolute top-0'
         onError={() => setError(true)}
       />
+      {film.posterFilm}
     </div>
   );
 };

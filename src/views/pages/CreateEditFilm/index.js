@@ -129,17 +129,6 @@ const CreateEditFilm = () => {
         slug: state.titleSlug,
       };
 
-      // const actor = state.actor.split(',').map((item) => item.trim().toLowerCase());
-      // const formData = new FormData();
-      // formData.append('files', [state.posterFilm, state.bannerFilm]);
-      // // formData.append('bannerFilm', state.bannerFilm);
-      // formData.append('title', state.title);
-      // formData.append('actor', actor);
-      // formData.append('description', state.description);
-      // formData.append('trailerURL', state.trailerURL);
-      // formData.append('filmURL', state.filmURL);
-      // formData.append('titleSearch', state.titleSearch);
-      // formData.append('slug', state.titleSlug);
 
       if (isAddFilmPage) {
         setState({
@@ -430,7 +419,7 @@ const CreateEditFilm = () => {
                   console.log("value::", value);
                   setState((newState) => ({
                     ...newState,
-                    posterFilm: `${process.env.REACT_APP_BASE_API_PREFIX}${value?.path}` ?? '',
+                    posterFilm: `${value?.path}` ?? '',
                   }));
                 }}
                 styleContainer='mr-6'
@@ -444,7 +433,7 @@ const CreateEditFilm = () => {
                 setState={(value) => {
                   setState({
                     ...state,
-                    bannerFilm: `${process.env.REACT_APP_BASE_API_PREFIX}${value?.path}` ?? '',
+                    bannerFilm: `${value?.path}` ?? '',
                   });
                 }}
                 styleContainer='mr-6'
