@@ -53,16 +53,19 @@ const CreateEditFilm = () => {
     switchMode: false,
     error: '',
     title: '',
-    titleSlug: '',
-    titleSearch: '',
     actor: '',
     description: '',
     genre: [],
-    posterFilm: '',
-    bannerFilm: '',
-    trailerURL: '',
-    filmURL: '',
+    poster: '',
+    epsisodes: [],
   });
+
+  const defaultEpsisode = {
+    title: "",
+    description: "",
+    episode: null,
+    video: ""
+  }
 
   const [validate, setValidate] = useState('');
   const [msg, setMsg] = useState('');
@@ -79,30 +82,21 @@ const CreateEditFilm = () => {
           const currentFilm = response.data;
           const {
             title,
-            titleSearch,
             actor,
             description,
             genre,
             posterFilm,
-            bannerFilm,
-            trailerURL,
-            filmURL,
           } = currentFilm;
 
           setState((newState) => ({
             ...newState,
             currentFilm,
             title,
-            titleSearch,
             actor: actor.join(', '),
             description,
             genre,
             posterFilm,
-            bannerFilm,
-            trailerURL,
-            filmURL,
             loading: false,
-            titleSlug: slug,
           }));
         } catch (err) {
           console.log(err);
@@ -118,15 +112,11 @@ const CreateEditFilm = () => {
     try {
       const dataUpload = {
         title: state.title,
-        images: [state.posterFilm, state.bannerFilm],
+        poster: state.poster,
         description: state.description,
         genre: state.genre,
-        isUpload: state.switchMode,
         actor: state.actor.split(',').map((item) => item.trim().toLowerCase()),
-        trailerURL: state.trailerURL,
-        filmURL: state.filmURL,
-        titleSearch: state.titleSearch,
-        slug: state.titleSlug,
+        episodes: state.epsisodes,
       };
 
 
@@ -173,15 +163,11 @@ const CreateEditFilm = () => {
         validation(
           state.title,
           state.description,
-          state.posterFilm,
-          state.bannerFilm,
-          state.trailerURL,
-          state.filmURL,
+          state.poster,
           state.actor,
-          state.titleSearch,
-          state.titleSlug,
         ) &&
         state.genre.length > 0 &&
+        state.epsisodes.length > 0 &&
         !msg
       ) {
         progressData();
@@ -206,6 +192,34 @@ const CreateEditFilm = () => {
     value: item.genre,
     label: item.vn,
   }));
+
+  const addEpisode = () => {
+    setState(
+      {
+        ...state,
+        epsisodes: [
+          ...state.epsisodes,
+          {
+            ...defaultEpsisode,
+            episode: state.epsisodes.length + 1,
+          },
+        ],
+      }
+      )
+  }
+
+  const handleChangeEpsisode = (key, data, index) => {
+    const newData = state.epsisodes;
+    newData[index][key] = data;
+    setState(
+      {
+        ...state,
+        epsisodes: newData,
+      }
+    )
+  }
+
+  console.log(state)
 
   return (
     <>
@@ -268,66 +282,6 @@ const CreateEditFilm = () => {
                 value={state.title}
               />
             </label>
-            <label htmlFor='titleSlug' className='mb-6'>
-              <span className='text-20 text-white mb-2 block'>Slug</span>
-              <div className='flex items-stretch'>
-                <input
-                  id='titleSlug'
-                  type='text'
-                  className='createReview__form-input flex-1 mr-4'
-                  placeholder='Slug'
-                  onChange={async (e) => {
-                    setState({
-                      ...state,
-                      titleSlug: e.target.value,
-                    });
-                    const checkSlug = isAddFilmPage
-                      ? await checkSlugApi(e.target.value)
-                      : e.target.value === slug
-                      ? { data: { msg: '' } }
-                      : await checkSlugApi(e.target.value);
-                    setMsg(checkSlug.data.msg);
-                  }}
-                  value={state.titleSlug}
-                />
-                <button
-                  type='button'
-                  className='text-white bg-red-primary text-30 font-bold px-6 rounded-md text-center hover:bg-red-primary-d transition duration-200'
-                  onClick={async () => {
-                    setState({
-                      ...state,
-                      titleSlug: getSlug(state.title),
-                    });
-                    const checkSlug = isAddFilmPage
-                      ? await checkSlugApi(getSlug(state.title))
-                      : getSlug(state.title) === slug
-                      ? { data: { msg: '' } }
-                      : await checkSlugApi(getSlug(state.title));
-                    setMsg(checkSlug.data.msg);
-                  }}
-                >
-                  <BiRefresh />
-                </button>
-              </div>
-            </label>
-            <label htmlFor='titleSearch' className='mb-6'>
-              <span className='text-20 text-white mb-2 block'>
-                Tên phim khi tìm kiếm
-              </span>
-              <input
-                id='titleSearch'
-                type='text'
-                className='createReview__form-input w-full'
-                placeholder='Tiêu đề tìm kiếm'
-                onChange={(e) => {
-                  setState({
-                    ...state,
-                    titleSearch: e.target.value,
-                  });
-                }}
-                value={state.titleSearch}
-              />
-            </label>
             <label htmlFor='actor' className='mb-6'>
               <span className='mb-2 block text-20 text-white'>Diễn viên</span>
               <input
@@ -373,67 +327,71 @@ const CreateEditFilm = () => {
                 placeholder='Thể loại'
               />
             </label>
-            <label htmlFor='trailerURL' className='my-6'>
-              <span className='text-20 text-white mb-2 block'>URL Trailer</span>
-              <input
-                id='trailerURL'
-                type='text'
-                value={state.trailerURL}
-                placeholder='URL Trailer'
-                className='createReview__form-input w-full'
-                onChange={(e) => {
-                  setState({
-                    ...state,
-                    trailerURL: e.target.value,
-                  });
-                }}
-              />
+            <label htmlFor='Epsisode' className='my-6 flex justify-between items-center'>
+              <div className='text-20 text-white mb-2'>Danh sách tập phim</div>
+              <div
+                className='text-20 text-white mb-2 py-2 px-4 bg-red-primary rounded-sm cursor-pointer'
+                onClick={() => addEpisode()}
+              >
+                Thêm tập phim
+              </div>
             </label>
-            <label htmlFor='filmURL' className='my-6'>
-              <span className='text-20 text-white mb-2 block'>URL Phim</span>
-              <input
-                id='filmURL'
-                type='text'
-                value={state.filmURL}
-                placeholder='URL Phim'
-                className='createReview__form-input w-full'
-                onChange={(e) => {
-                  setState({
-                    ...state,
-                    filmURL: e.target.value,
-                  });
-                }}
-              />
-            </label>
+
+            {
+              (state.epsisodes || []).map((item, index) => (
+                <div className='mt-3 border rounded-lg border-gray-500 p-8 mb-3' key={`epsisodes_${index}`}>
+                  <div className='mb-2 block text-20 text-white'>
+                    {
+                      `Tập Phim: ${item?.epsisode || 0}`
+                    }
+                  </div>
+
+                  <div className='mb-2 block text-20 text-white'>Tiêu đề</div>
+                  <input
+                    type='text'
+                    className='createReview__form-input w-full'
+                    placeholder='Tiêu đề  phim'
+                    onChange={(e) => handleChangeEpsisode('title', e.target.value, index)}
+                    value={item.title}
+                  />
+
+                  <div className='mb-2 block text-20 text-white'>Mô tả</div>
+                  <input
+                    type='text'
+                    className='createReview__form-input w-full'
+                    placeholder='Mô tả phim'
+                    onChange={(e) => handleChangeEpsisode('description', e.target.value, index)}
+                    value={item.description}
+                  />
+
+                  <div className='mb-2 block text-20 text-white'>Video</div>
+                  <input
+                    type='text'
+                    className='createReview__form-input w-full'
+                    placeholder='URL video'
+                    onChange={(e) => handleChangeEpsisode('video', e.target.value, index)}
+                    value={item.video}
+                  />
+
+
+                </div>
+              ))
+            }
 
             <label className='flex items-center justify-start mb-6'>
               <span className='text-20 text-white'>Tải lên hình ảnh</span>
             </label>
             <div className='createReview__form-input mb-6 flex'>
               <InputImageFile
-                id='posterFilm'
-                value={state.posterFilm}
+                id='poster'
+                value={state.poster}
                 placeholder='Chọn Poster'
                 width='w-14rem'
                 setState={(value) => {
                   console.log("value::", value);
-                  setState((newState) => ({
-                    ...newState,
-                    posterFilm: `${value?.path}` ?? '',
-                  }));
-                }}
-                styleContainer='mr-6'
-                styleLabel='ml-6'
-              />
-              <InputImageFile
-                id='bannerFilm'
-                value={state.bannerFilm}
-                placeholder='Chọn Banner'
-                width='w-26rem'
-                setState={(value) => {
                   setState({
                     ...state,
-                    bannerFilm: `${value?.path}` ?? '',
+                    poster: value ?? '',
                   });
                 }}
                 styleContainer='mr-6'
