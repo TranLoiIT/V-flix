@@ -36,23 +36,29 @@ const RowTableFilms = (props) => {
 
   const handleDelete = async (slug) => {
     try {
-      if (!isBin) {
-        await updateFilmApi(slug, { softDelete: true });
-        setState({
-          ...state,
-          lastSlug: slug,
-        });
-        setTimeout(() => handleFlag(), 500);
-        setMessage(
-          'Đã chuyển phim vào thùng rác (Truy cập thùng rác để khôi phục)',
-        );
-        setLoading(true);
-      } else {
-        await deleteFilmApi(slug);
-        setTimeout(() => handleFlag(), 500);
-        setMessage('Phim đã bị xóa vĩnh viễn');
-        setLoading(true);
-      }
+      // if (!isBin) {
+      //   await updateFilmApi(slug, { softDelete: true });
+      //   setState({
+      //     ...state,
+      //     lastSlug: slug,
+      //   });
+      //   setTimeout(() => handleFlag(), 500);
+      //   setMessage(
+      //     'Đã chuyển phim vào thùng rác (Truy cập thùng rác để khôi phục)',
+      //   );
+      //   setLoading(true);
+      // } else {
+      //   await deleteFilmApi(slug);
+      //   setTimeout(() => handleFlag(), 500);
+      //   setMessage('Phim đã bị xóa vĩnh viễn');
+      //   setLoading(true);
+      // }
+
+      await deleteFilmApi(slug);
+      setTimeout(() => handleFlag(), 500);
+      setMessage('Phim đã bị xóa vĩnh viễn');
+      setLoading(true);
+
     } catch (err) {
       console.log(err);
     }
@@ -172,7 +178,7 @@ const RowTableFilms = (props) => {
           ) : (
             <MdRemoveCircle
               className='btnAction text-red-primary hover:text-red-primary-d text-28 transition-all duration-200'
-              onClick={() => handleDelete(film.slug)}
+              onClick={() => handleDelete(film._id)}
             />
           )}
         </div>

@@ -6,7 +6,7 @@ import { registerNoResApi } from 'apis/userApi';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import FacebookLogin from 'react-facebook-login';
-import GoogleLogin from 'react-google-login';
+import { GoogleLogin } from '@react-oauth/google';
 import { Helmet } from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Redirect, useHistory, useLocation } from 'react-router-dom';
@@ -91,7 +91,7 @@ const Login = (props) => {
 
   const responseSuccessGoogle = async (res) => {
     try {
-      dispatch(userActions.loginGoogle(res.tokenId));
+      dispatch(userActions.loginGoogle(res.credential));
     } catch (err) {
       console.log(err);
     }
@@ -234,14 +234,17 @@ const Login = (props) => {
               </div>
               <div className='login__social flex'>
                 <GoogleLogin
-                  clientId='820242333597-7tbh02vghgiunu7ekdkugpte288cqhjb.apps.googleusercontent.com'
-                  buttonText='Google'
+                  onSuccess={responseSuccessGoogle}
+                  onError={responseFailGoogle}
+                  useOneTap
+                />
+                {/* <GoogleLogin
                   onSuccess={responseSuccessGoogle}
                   onFailure={responseFailGoogle}
                   cookiePolicy='single_host_origin'
                   className='justify-center flex-1 mr-4'
                   icon={false}
-                />
+                /> */}
                 <FacebookLogin
                   appId='761669164547706'
                   autoLoad={false}

@@ -89,7 +89,7 @@ const Banner = (props) => {
             length={numItems}
           >
             {(films || []).slice(0, 4).map((film, index) => {
-              const { _id, slug, bannerFilm } = film;
+              const { _id, slug, poster } = film;
               return (
                 <Link
                   to={`/film/${slug}`}
@@ -110,8 +110,8 @@ const Banner = (props) => {
                   key={_id || index}
                 >
                   <img
-                    className='w-full h-full object-cover'
-                    src={`${process.env.REACT_APP_BASE_API_PREFIX}${bannerFilm}`}
+                    className='w-full h-4/5 object-cover'
+                    src={`${process.env.REACT_APP_BASE_API_PREFIX}${poster}`}
                     alt='banner'
                   />
                   <div className='opacity-0 banner__slider-item-over flex-col justify-end bg-black absolute w-full h-full top-0 bg-opacity-60 pl-8rem pb-35rem transition duration-300 group-hover:opacity-100 hidden xl:flex'>

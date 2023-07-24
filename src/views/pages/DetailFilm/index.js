@@ -107,7 +107,7 @@ const DetailFilm = () => {
                 <BiArrowBack />
               </Link>
               <ReactPlayer
-                url={currentFilm.filmURL}
+                url={currentFilm.poster}
                 controls
                 playing
                 width='100%'
@@ -121,7 +121,7 @@ const DetailFilm = () => {
                     <div className='p-film'>
                       <img
                         className='absolute object-cover top-0 left-0 w-full h-full'
-                        src={currentFilm.posterFilm}
+                        src={currentFilm.poster}
                         alt='poster'
                       />
                     </div>
