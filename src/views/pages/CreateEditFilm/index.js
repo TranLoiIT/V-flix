@@ -57,7 +57,7 @@ const CreateEditFilm = () => {
     description: '',
     genre: [],
     poster: '',
-    epsisodes: [],
+    episodes: [],
   });
 
   const defaultEpsisode = {
@@ -80,22 +80,9 @@ const CreateEditFilm = () => {
           });
           const response = await getAFilmApi(slug);
           const currentFilm = response.data;
-          const {
-            title,
-            actor,
-            description,
-            genre,
-            posterFilm,
-          } = currentFilm;
-
           setState((newState) => ({
             ...newState,
-            currentFilm,
-            title,
-            actor: actor.join(', '),
-            description,
-            genre,
-            posterFilm,
+            ...currentFilm,
             loading: false,
           }));
         } catch (err) {
@@ -112,14 +99,14 @@ const CreateEditFilm = () => {
     try {
       const dataUpload = {
         title: state.title,
-        poster: state.poster,
         description: state.description,
-        genre: state.genre,
+        poster: state.poster,
         actor: state.actor.split(',').map((item) => item.trim().toLowerCase()),
-        episodes: state.epsisodes,
+        genre: state.genre,
+        ...(isAddFilmPage && {episodes: state.episodes}),
       };
 
-
+      console.log('dataUpload', dataUpload)
       if (isAddFilmPage) {
         setState({
           ...state,
@@ -136,11 +123,12 @@ const CreateEditFilm = () => {
         });
         await pushNotificationApi(state.titleSlug);
       } else {
+        console.log('11111111111', 11111111111)
         setState({
           ...state,
           updating: true,
         });
-        await updateFilmApi(slug, dataUpload);
+        await updateFilmApi(state._id, dataUpload);
         setState({
           ...state,
           updating: false,
@@ -167,7 +155,7 @@ const CreateEditFilm = () => {
           state.actor,
         ) &&
         state.genre.length > 0 &&
-        state.epsisodes.length > 0 &&
+        state.episodes.length > 0 &&
         !msg
       ) {
         progressData();
@@ -197,11 +185,11 @@ const CreateEditFilm = () => {
     setState(
       {
         ...state,
-        epsisodes: [
-          ...state.epsisodes,
+        episodes: [
+          ...state.episodes,
           {
             ...defaultEpsisode,
-            episode: state.epsisodes.length + 1,
+            episode: state.episodes.length + 1,
           },
         ],
       }
@@ -209,17 +197,17 @@ const CreateEditFilm = () => {
   }
 
   const handleChangeEpsisode = (key, data, index) => {
-    const newData = state.epsisodes;
+    const newData = state.episodes;
     newData[index][key] = data;
     setState(
       {
         ...state,
-        epsisodes: newData,
+        episodes: newData,
       }
     )
   }
 
-  console.log(state)
+  // console.log(state)
 
   return (
     <>
@@ -338,8 +326,8 @@ const CreateEditFilm = () => {
             </label>
 
             {
-              (state.epsisodes || []).map((item, index) => (
-                <div className='mt-3 border rounded-lg border-gray-500 p-8 mb-3' key={`epsisodes_${index}`}>
+              (state.episodes || []).map((item, index) => (
+                <div className='mt-3 border rounded-lg border-gray-500 p-8 mb-3' key={`episodes_${index}`}>
                   <div className='mb-2 block text-20 text-white'>
                     {
                       `Tập Phim: ${item?.epsisode || 0}`
