@@ -37,8 +37,8 @@ export const addFilmApi = async (data) => {
   return promise;
 };
 
-export const updateFilmApi = async (slug, data) => {
-  const promise = await axios.patch(`${path}/${slug}`, data, {
+export const updateFilmApi = async (id, data) => {
+  const promise = await axios.patch(`${path}/${id}`, data, {
     withCredentials: true,
   });
   return promise;
