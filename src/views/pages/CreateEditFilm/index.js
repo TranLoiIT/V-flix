@@ -9,28 +9,29 @@
 /* eslint-disable max-len */
 import { Modal } from '@material-ui/core';
 import {
+  addEpisode,
   addFilmApi,
-  checkSlugApi,
+  deleteEpisode,
   getAFilmApi,
+  updateEpisode,
   updateFilmApi
 } from 'apis/filmApi';
 import { pushNotificationApi } from 'apis/subscriptionApi';
 import { stylesSelectCreateEditFilm } from 'assets/styles/stylesMaterialUI/stylesSelect';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { BiRefresh } from 'react-icons/bi';
 import { useSelector } from 'react-redux';
 import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { adminSelectors } from 'state/modules/admin';
 import { categoriesSelectors } from 'state/modules/categories';
-import getSlug from 'utils/getSlug';
 import { Loading } from 'utils/Loadable';
 import validation from 'utils/validation';
-import CustomSwitch from 'views/components/CustomSwitch';
 import InputImageFile from 'views/components/InputImageFile';
-import InputImageUrl from 'views/components/InputImageUrl';
 import './style.scss';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { toast } from 'react-toastify';
+import { AiOutlineClose } from "react-icons/ai";
 
 const CreateEditFilm = () => {
   const history = useHistory();
@@ -59,8 +60,13 @@ const CreateEditFilm = () => {
     poster: '',
     episodes: [],
   });
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [isAddFilm, setIsAddFilm] = useState(false);
+  const [formFilm, setFormFilm] = useState(null);
+  const [currentFormFilm, setCurrentFormFilm] = useState(null);
+  const [disableBtnUpdate, setDisableBtnUpdate] = useState(false);
 
-  const defaultEpsisode = {
+  const defaultEpisode = {
     title: "",
     description: "",
     episode: null,
@@ -106,7 +112,6 @@ const CreateEditFilm = () => {
         ...(isAddFilmPage && {episodes: state.episodes}),
       };
 
-      console.log('dataUpload', dataUpload)
       if (isAddFilmPage) {
         setState({
           ...state,
@@ -123,7 +128,6 @@ const CreateEditFilm = () => {
         });
         await pushNotificationApi(state.titleSlug);
       } else {
-        console.log('11111111111', 11111111111)
         setState({
           ...state,
           updating: true,
@@ -167,36 +171,48 @@ const CreateEditFilm = () => {
     }
   };
 
-  // const toggleSwitchMode = () => {
-  //   setState({
-  //     ...state,
-  //     switchMode: !state.switchMode,
-  //     posterFilm: '',
-  //     bannerFilm: '',
-  //   });
-  // };
-
   const genresOptions = categories.map((item) => ({
     value: item.genre,
     label: item.vn,
   }));
 
-  const addEpisode = () => {
-    setState(
-      {
-        ...state,
-        episodes: [
-          ...state.episodes,
-          {
-            ...defaultEpsisode,
-            episode: state.episodes.length + 1,
-          },
-        ],
-      }
-      )
+  const toastMessage = (type = 'sucess', message = '', time = 5000) => {
+    toast[type](message, {
+      position: "top-right",
+      autoClose: time,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
   }
 
-  const handleChangeEpsisode = (key, data, index) => {
+  const addEpisodeFilm = () => {
+    const newData = {
+      ...defaultEpisode,
+      episode: state.episodes.length + 1,
+    }
+    if (isAddFilmPage) {
+      setState(
+        {
+          ...state,
+          episodes: [
+            ...state.episodes,
+            newData,
+          ],
+        }
+      )
+    } else {
+      setIsUpdate(false);
+      setIsAddFilm(true);
+      setCurrentFormFilm(newData);
+      setFormFilm(newData)
+    }
+  }
+
+  const changeEpisode = (key, data, index) => {
     const newData = state.episodes;
     newData[index][key] = data;
     setState(
@@ -207,7 +223,113 @@ const CreateEditFilm = () => {
     )
   }
 
-  // console.log(state)
+  const handelUpdateEpisode = async (id) => {
+    try {
+      setState({
+        ...state,
+        updating: true,
+      });
+      const data = {
+        ...(formFilm?.title !== currentFormFilm.title && {title: formFilm?.title}),
+        ...(formFilm?.description !== currentFormFilm.description && {description: formFilm?.description}),
+        ...(formFilm?.video !== currentFormFilm.video && {video: formFilm?.video}),
+        episode: formFilm?.episode || '',
+      }
+      const res = await updateEpisode(id, data);
+      toastMessage('success', 'Cập nhập tập phim thành công!');
+    } catch (error) {
+      toastMessage('error', 'Cập nhập tập phim không thành công!');
+    } finally {
+      setState({
+        ...state,
+        updating: false,
+      });
+      setIsUpdate(false);
+    }
+  }
+
+  const handelAddEpisode = async () => {
+    setState({
+      ...state,
+      updating: true,
+    });
+    try {
+      const data = {
+        film: state._id,
+        ...formFilm,
+      }
+      const res = await addEpisode(data);
+      if (res?.data) {
+        // await getFilm();
+        setState(
+          {
+            ...state,
+            episodes: [
+              ...state.episodes,
+              data,
+            ],
+            updating: false
+          }
+        )
+        toastMessage('success', 'Thêm mới tập phim thành công!');
+      }
+    } catch (error) {
+      toastMessage('error', 'Thêm mới tập phim không thành công!');
+      setState({
+        ...state,
+        updating: false,
+      });
+    }finally {
+      setIsAddFilm(false);
+    }
+  }
+
+  const handleDeleteEpisode = async (id) => {
+    setState({
+      ...state,
+      updating: true,
+    });
+    try {
+      const res = await deleteEpisode(id);
+      if (res.status === 200) {
+        const listEpisodes = state.episodes.filter((i) => i._id !== id);
+        setState(
+          {
+            ...state,
+            episodes: [
+              ...listEpisodes,
+            ],
+            updating: false,
+          }
+        )
+        toastMessage('success', 'Xóa tập phim thành công!')
+      }
+    } catch (error) {
+      setState(
+        {
+          ...state,
+          updating: false,
+        }
+      )
+      toastMessage('error', 'Xóa tập phim không công!')
+    } finally {
+      setIsAddFilm(false);
+      setIsUpdate(false);
+    }
+  }
+
+  useEffect(() => {
+    if (formFilm && currentFormFilm) {
+      if (JSON.stringify(formFilm) !== JSON.stringify(currentFormFilm)) {
+        setDisableBtnUpdate(false);
+      } else {
+        setDisableBtnUpdate(true);
+      }
+    } else {
+      setDisableBtnUpdate(true);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(formFilm), JSON.stringify(currentFormFilm)])
 
   return (
     <>
@@ -315,23 +437,58 @@ const CreateEditFilm = () => {
                 placeholder='Thể loại'
               />
             </label>
+
             <label htmlFor='Epsisode' className='my-6 flex justify-between items-center'>
               <div className='text-20 text-white mb-2'>Danh sách tập phim</div>
               <div
                 className='text-20 text-white mb-2 py-2 px-4 bg-red-primary rounded-sm cursor-pointer'
-                onClick={() => addEpisode()}
+                onClick={() => addEpisodeFilm()}
               >
                 Thêm tập phim
               </div>
             </label>
 
+            <div className='grid grid-cols-10 gap-3 mb-6'>
+              { !isAddFilmPage && (state.episodes || []).map((item, index) => (
+                <div
+                  className='bg-red-primary py-3 px-5 rounded-lg text-center text-16 text-white font-bold cursor-pointer'
+                  key={`list-episode-${index + 1}`}
+                  onClick={() => {
+                    setIsUpdate(true);
+                    setFormFilm({...item, episode: index + 1});
+                    setCurrentFormFilm({...item, episode: index + 1});
+                  }}
+                >
+                  {index + 1}
+                </div>
+              ))}
+            </div>
+
             {
-              (state.episodes || []).map((item, index) => (
+              isAddFilmPage && (state.episodes || []).map((item, index) => (
                 <div className='mt-3 border rounded-lg border-gray-500 p-8 mb-3' key={`episodes_${index}`}>
-                  <div className='mb-2 block text-20 text-white'>
-                    {
-                      `Tập Phim: ${item?.epsisode || 0}`
-                    }
+                  <div className='mb-2 text-20 text-white flex justify-between'>
+                    <div>
+                      {
+                        `Tập Phim: ${index + 1}`
+                      }
+                    </div>
+                    <div
+                      onClick={() => {
+                        const listEpisodes = state.episodes.filter((i) => i.episode !== item.episode);
+                        setState(
+                          {
+                            ...state,
+                            episodes: [
+                              ...listEpisodes,
+                            ],
+                          }
+                        )
+                      }}
+                      className='cursor-pointer'
+                    >
+                      <AiOutlineClose />
+                    </div>
                   </div>
 
                   <div className='mb-2 block text-20 text-white'>Tiêu đề</div>
@@ -339,7 +496,7 @@ const CreateEditFilm = () => {
                     type='text'
                     className='createReview__form-input w-full'
                     placeholder='Tiêu đề  phim'
-                    onChange={(e) => handleChangeEpsisode('title', e.target.value, index)}
+                    onChange={(e) => changeEpisode('title', e.target.value, index)}
                     value={item.title}
                   />
 
@@ -348,7 +505,7 @@ const CreateEditFilm = () => {
                     type='text'
                     className='createReview__form-input w-full'
                     placeholder='Mô tả phim'
-                    onChange={(e) => handleChangeEpsisode('description', e.target.value, index)}
+                    onChange={(e) => changeEpisode('description', e.target.value, index)}
                     value={item.description}
                   />
 
@@ -357,13 +514,94 @@ const CreateEditFilm = () => {
                     type='text'
                     className='createReview__form-input w-full'
                     placeholder='URL video'
-                    onChange={(e) => handleChangeEpsisode('video', e.target.value, index)}
+                    onChange={(e) => changeEpisode('video', e.target.value, index)}
                     value={item.video}
                   />
 
 
                 </div>
               ))
+            }
+
+            {
+              (isUpdate || isAddFilm) && (
+                <div className='mt-3 border rounded-lg border-gray-500 p-8 mb-6'>
+                  <div className='mb-2 flex justify-between text-20 text-white font-bold'>
+                    <div>
+                      {
+                        isUpdate && `Cập nhập tập phim: ${formFilm?.episode}`
+                      }
+                      {
+                        isAddFilm && `Thêm mới tập phim: ${formFilm?.episode}`
+                      }
+                    </div>
+                    <div
+                      onClick={() => {
+                        setIsUpdate(false);
+                        setIsAddFilm(false);
+                      }}
+                      className='cursor-pointer'
+                    >
+                      <AiOutlineClose />
+                    </div>
+                  </div>
+
+                  <div className='mb-2 block text-20 text-white'>Tiêu đề</div>
+                  <input
+                    className='createReview__form-input w-full'
+                    placeholder='Tiêu đề  phim'
+                    onChange={(e) => setFormFilm({...formFilm, title: e.target.value.trim()})}
+                    value={formFilm?.title}
+                  />
+
+                  <div className='mb-2 block text-20 text-white'>Mô tả</div>
+                  <input
+                    className='createReview__form-input w-full'
+                    placeholder='Mô tả phim'
+                    onChange={(e) => setFormFilm({...formFilm, description: e.target.value.trim()})}
+                    value={formFilm?.description}
+                  />
+
+                  <div className='mb-2 block text-20 text-white'>Video</div>
+                  <input
+                    className='createReview__form-input w-full'
+                    placeholder='URL video'
+                    onChange={(e) => setFormFilm({...formFilm, video: e.target.value.trim()})}
+                    value={formFilm?.video}
+                  />
+                  
+                  <div className='flex justify-center item-center gap-8 mt-6'>
+                    <div
+                      className={
+                        `text-center text-14 font-medium text-white py-4 px-5 bg-red-primary w-60 rounded-lg 
+                        ${disableBtnUpdate ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`
+                      }
+                      onClick={() => {
+                        if (!disableBtnUpdate) {
+                          if (isUpdate) {
+                            handelUpdateEpisode(formFilm._id)
+                          } else {
+                            handelAddEpisode()
+                          }
+                        }
+                      }}
+                    >
+                      Lưu
+                    </div>
+                    {
+                      isUpdate && (
+                        <div
+                          className='text-center text-14 font-medium text-white py-4 px-5 bg-red-primary w-60 rounded-lg cursor-pointer'
+                          onClick={() => handleDeleteEpisode(formFilm?._id)}
+                        >
+                          Xóa
+                        </div>
+                      )
+                    }
+                  </div>
+
+                </div>
+              )
             }
 
             <label className='flex items-center justify-start mb-6'>
@@ -376,7 +614,6 @@ const CreateEditFilm = () => {
                 placeholder='Chọn Poster'
                 width='w-14rem'
                 setState={(value) => {
-                  console.log("value::", value);
                   setState({
                     ...state,
                     poster: value ?? '',

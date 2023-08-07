@@ -197,7 +197,7 @@ const ListFilms = (props) => {
                   <th style={{ width: '18%' }}>Tên phim</th>
                   <th style={{ width: '14%' }}>Diễn viên</th>
                   <th style={{ width: '14%' }}>Thể loại</th>
-                  <th style={{ width: '30%' }}>Nội dung</th>
+                  <th style={{ width: '20%' }}>Nội dung</th>
                   <th className='pr-1rem' style={{ width: '10%' }} colSpan='2'>
                     Hành động
                   </th>

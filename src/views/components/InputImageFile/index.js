@@ -1,9 +1,8 @@
 /* eslint-disable indent */
 /* eslint-disable no-nested-ternary */
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './style.scss';
-import axios from 'axios';
 
 const InputImageFile = (props) => {
   const {
@@ -35,28 +34,9 @@ const InputImageFile = (props) => {
     };
   };
 
-  // const handleUpload = async (formData) => {
-  //   try {
-  //     // const res = await axios({
-  //     //   method: "POST",
-  //     //   url: "/api/file/upload",
-  //     //   data: formData,
-  //     //   headers: { "Content-Type": "multipart/form-data" },
-  //     // })
-  //     setState(res.data);
-  //     setImage(res?.data?.path || '')
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-    
-  // }
-
   const handleOnChange = (e) => {
     const file = e.currentTarget.files[0];
     previewFile(file);
-    // let formData = new FormData()
-    // formData.append('file', e.currentTarget.files[0]);
-    // handleUpload(formData)
   };
 
   return (

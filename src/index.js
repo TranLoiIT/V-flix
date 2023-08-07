@@ -9,6 +9,11 @@ import rootSaga from './state/rootSaga';
 import App from './views/App';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { ToastContainer } from 'react-toastify';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import 'react-toastify/dist/ReactToastify.css';
+
 const store = configureStore({}, rootReducer);
 
 store.runSaga(rootSaga);
@@ -19,6 +24,7 @@ ReactDOM.render(
       // className='cursor-pointer'
       clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
     >
+      <ToastContainer />
       <App />
     </GoogleOAuthProvider>
   </Provider>,

@@ -57,3 +57,18 @@ export const checkSlugApi = async (slug) => {
   });
   return promise;
 };
+
+export const updateEpisode = async (id, param) => {
+  const res = await axios.patch(`/api/episodes/${id}`, param);
+  return res;
+}
+
+export const addEpisode = async (param) => {
+  const res = await axios.post(`/api/episodes`, param);
+  return res;
+}
+
+export const deleteEpisode = async (id) => {
+  const res = await axios.delete(`/api/episodes/${id}`);
+  return res;
+}

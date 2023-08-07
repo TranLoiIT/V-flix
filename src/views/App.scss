@@ -25,3 +25,7 @@ body {
   @apply bg-red-primary;
   border-radius: 10px;
 }
+
+.Toastify__toast-body {
+  font-size: 16px !important;
+}
