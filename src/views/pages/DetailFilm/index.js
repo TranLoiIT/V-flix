@@ -24,6 +24,7 @@ const DetailFilm = () => {
   const { pathname } = useLocation();
   const dispatch = useDispatch();
   const [currentFilm, setCurrentFilm] = useState({});
+  const [episode, setEpisode] = useState({});
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
   const [scrolling, setScrolling] = useState(false);
@@ -66,6 +67,7 @@ const DetailFilm = () => {
     const getFilm = async () => {
       const response = await getAFilmAndRelated(slug);
       setCurrentFilm(response.data.film);
+      setEpisode(response.data.film.episodes[0])
       if (isAuthenticated) {
         handleUpdateHistoryUser(response.data.film);
       }
@@ -82,6 +84,8 @@ const DetailFilm = () => {
   const handleUpdateFilm = (dataUpdate) => {
     setCurrentFilm(dataUpdate);
   };
+
+  console.log('episode', episode)
 
   return (
     <>
@@ -106,22 +110,26 @@ const DetailFilm = () => {
               >
                 <BiArrowBack />
               </Link>
-              <ReactPlayer
-                url={currentFilm.poster}
-                controls
-                playing
-                width='100%'
-                height={window.innerWidth >= 1280 ? '100vh' : '56.25vw'}
-              />
+              {
+                (!loading && episode?.url) && (
+                  <ReactPlayer
+                    url={episode?.url}
+                    controls
+                    playing
+                    width='100%'
+                    height={window.innerWidth >= 1280 ? '100vh' : '56.25vw'}
+                  />
+                )
+              }
             </div>
             <div className='detailFilm__info container mt-10 mx-auto flex mb-6rem flex-wrap'>
-              <div className='detailFilm__info-left flex-1 mb-20rem xl:mr-20 mx-4% lg: mx-0'>
+              <div className='detailFilm__info-left flex-1 mb-20rem xl:mr-20 mx-4% lg:mx-0'>
                 <div className='detailFilm__info-left-top flex items-start mb-16'>
                   <div className='w-1/4 relative mr-10'>
                     <div className='p-film'>
                       <img
                         className='absolute object-cover top-0 left-0 w-full h-full'
-                        src={currentFilm.poster}
+                        src={`${process.env.REACT_APP_BASE_API_PREFIX}${currentFilm.poster}`}
                         alt='poster'
                       />
                     </div>
@@ -204,6 +212,36 @@ const DetailFilm = () => {
                     <p className='text-16 text-white'>
                       {currentFilm.description}
                     </p>
+                  </div>
+                </div>
+                <div className='mb-16'>
+                  <div className='text-20 text-white mb-2'>Danh sách tập phim</div>
+                  <div className='grid grid-cols-12 gap-8 mb-6'>
+                    {
+                      (currentFilm?.episodes || []).map((item, index) => (
+                        <div
+                          className={
+                            `
+                            bg-red-primary py-3 px-5 rounded-lg text-center text-16 text-white font-bold 
+                            ${item._id === episode?._id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                            `
+                          }
+                          key={item._id}
+                          onClick={() => {
+                            if (item._id !== episode?._id) {
+                              console.log('item', item)
+                              setLoading(true);
+                              setTimeout(() => {
+                                setEpisode({...item});
+                                setLoading(false);
+                              }, 1500);
+                            }
+                          }}
+                        >
+                          {index + 1}
+                        </div>
+                      ))
+                    }
                   </div>
                 </div>
                 <div className='detailFilm__info-left-bottom'>

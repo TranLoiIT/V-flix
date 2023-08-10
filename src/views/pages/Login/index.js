@@ -232,27 +232,27 @@ const Login = (props) => {
               <div className='text-14 border-t border-gray-primary-d pt-6 text-gray-primary text-center my-6'>
                 <span>Đăng nhập bằng</span>
               </div>
-              <div className='login__social flex'>
-                <GoogleLogin
-                  onSuccess={responseSuccessGoogle}
-                  onError={responseFailGoogle}
-                  useOneTap
-                />
-                {/* <GoogleLogin
-                  onSuccess={responseSuccessGoogle}
-                  onFailure={responseFailGoogle}
-                  cookiePolicy='single_host_origin'
-                  className='justify-center flex-1 mr-4'
-                  icon={false}
-                /> */}
-                <FacebookLogin
-                  appId='761669164547706'
-                  autoLoad={false}
-                  fields='name,email,picture'
-                  callback={responseFacebook}
-                  textButton='Facebook'
-                  cssClass='text-white text-20 bg-blue-facebook w-full h-full rounded-md hover:bg-blue-facebook-d'
-                />
+              <div className='block'>
+                <div className='flex justify-center items-center gap-8'>
+                  <GoogleLogin
+                    onSuccess={responseSuccessGoogle}
+                    onError={responseFailGoogle}
+                    useOneTap
+                  />
+                </div>
+                <div className='flex justify-center mt-5' style={{height: '40px'}}>
+                  <div className='bg-blue-facebook rounded-md btn-facebook'>
+                    <FacebookLogin
+                      appId='761669164547706'
+                      autoLoad={false}
+                      fields='name,email,picture'
+                      callback={responseFacebook}
+                      textButton='Đăng nhập bằng facebook'
+                      cssClass='text-white font-size-fb w-full h-full'
+                      // cssClass='text-white text-16 bg-blue-facebook flex w-4/5 h-full rounded-md hover:bg-blue-facebook-d'
+                    />
+                  </div>
+                </div>
               </div>
             </>
           ) : null}

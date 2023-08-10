@@ -44,10 +44,22 @@ export const updateFilmApi = async (id, data) => {
   return promise;
 };
 
-export const deleteFilmApi = async (slug) => {
-  const promise = await axios.delete(`${path}/${slug}`, {
+export const deleteFilmApi = async (id) => {
+  const promise = await axios.delete(`${path}/${id}`, {
     withCredentials: true,
   });
+  return promise;
+};
+
+export const deleteSoftFilmApi = async (id) => {
+  const promise = await axios.delete(`${path}/soft/${id}`, {
+    withCredentials: true,
+  });
+  return promise;
+};
+
+export const restoreFilmApi = async (id, payload) => {
+  const promise = await axios.patch(`${path}/${id}`, payload);
   return promise;
 };
 
