@@ -1,5 +1,5 @@
 import { Modal } from '@material-ui/core';
-import { deleteFilmApi, updateFilmApi } from 'apis/filmApi';
+import { deleteFilmApi, deleteSoftFilmApi, restoreFilmApi } from 'apis/filmApi';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { FaEdit, FaTrashAlt, FaTrashRestore } from 'react-icons/fa';
@@ -25,7 +25,9 @@ const RowTableFilms = (props) => {
 
   const handleRestore = async (data) => {
     try {
-      await updateFilmApi(data.slug, { softDelete: false });
+      const res = await restoreFilmApi(data._id, {
+        "softDelete": false
+      });
       setTimeout(() => handleFlag(), 500);
       setMessage(`Đã khôi phục phim ${data.title}`);
       setLoading(true);
@@ -34,31 +36,25 @@ const RowTableFilms = (props) => {
     }
   };
 
-  const handleDelete = async (slug) => {
+  const handleDelete = async (id) => {
     try {
-      // if (!isBin) {
-      //   await updateFilmApi(slug, { softDelete: true });
-      //   setState({
-      //     ...state,
-      //     lastSlug: slug,
-      //   });
-      //   setTimeout(() => handleFlag(), 500);
-      //   setMessage(
-      //     'Đã chuyển phim vào thùng rác (Truy cập thùng rác để khôi phục)',
-      //   );
-      //   setLoading(true);
-      // } else {
-      //   await deleteFilmApi(slug);
-      //   setTimeout(() => handleFlag(), 500);
-      //   setMessage('Phim đã bị xóa vĩnh viễn');
-      //   setLoading(true);
-      // }
-
-      await deleteFilmApi(slug);
-      setTimeout(() => handleFlag(), 500);
-      setMessage('Phim đã bị xóa vĩnh viễn');
-      setLoading(true);
-
+      if (!isBin) {
+        await deleteSoftFilmApi(id);
+        setState({
+          ...state,
+          lastSlug: id,
+        });
+        setTimeout(() => handleFlag(), 500);
+        setMessage(
+          'Đã chuyển phim vào thùng rác (Truy cập thùng rác để khôi phục)',
+        );
+        setLoading(true);
+      } else {
+        await deleteFilmApi(id);
+        setTimeout(() => handleFlag(), 500);
+        setMessage('Phim đã bị xóa vĩnh viễn');
+        setLoading(true);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -103,7 +99,7 @@ const RowTableFilms = (props) => {
           <button
             type='button'
             className='py-4 px-10 bg-red-primary hover:bg-red-primary-d text-20 rounded-md text-white'
-            onClick={() => handleDelete(film.slug)}
+            onClick={() => handleDelete(film._id)}
           >
             Đồng ý
           </button>
