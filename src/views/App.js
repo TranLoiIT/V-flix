@@ -27,7 +27,7 @@ import Login from './pages/Login';
 axios.defaults.baseURL =
   process.env.NODE_ENV === 'production'
     ? 'https://exercise-blog-api.herokuapp.com/'
-    : 'http://localhost:9000';
+    : 'http://103.170.122.197:9000/';
 
 const App = () => {
   const dispatch = useDispatch();
