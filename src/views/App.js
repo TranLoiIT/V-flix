@@ -24,10 +24,7 @@ import DetailFilm from './pages/DetailFilm';
 import ForgotPassword from './pages/ForgotPassword';
 import Login from './pages/Login';
 
-axios.defaults.baseURL =
-  process.env.NODE_ENV === 'production'
-    ? 'https://exercise-blog-api.herokuapp.com/'
-    : 'http://103.170.122.197:9000/';
+axios.defaults.baseURL = process.env.REACT_APP_BASE_API_PREFIX;
 
 const App = () => {
   const dispatch = useDispatch();
