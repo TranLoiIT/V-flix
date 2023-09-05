@@ -26,7 +26,7 @@ const Admin = (props) => {
   // Get data from store
   useEffect(() => {
     dispatch(adminActions.loadAdmin());
-
+    // console.log('1', 1)
     // eslint-disable-next-line
   }, []);
 
