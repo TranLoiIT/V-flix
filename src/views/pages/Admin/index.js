@@ -53,7 +53,7 @@ const Admin = (props) => {
           <div className=' fixed z-0 top-0 w-full opacity-30'>
             <img
               className='w-full h-full object-cover filter blur'
-              src='https://res.cloudinary.com/nghiemduong2000/image/upload/v1618500603/VMOflix%20Project/VMOflix%20-%20base/vmoflix-tv-logo_gd1rmx.webp'
+              src='https://res.cloudinary.com/dcrfjkvlm/image/upload/v1693886610/vmoflix-tv-logo_gd1rmx.png'
               alt=''
             />
           </div>

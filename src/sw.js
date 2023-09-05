@@ -7,15 +7,15 @@ function receivePushNotification(event) {
     vibrate: [200, 100, 200],
     tag,
     icon:
-      'https://res.cloudinary.com/nghiemduong2000/image/upload/v1618368062/VMOflix%20Project/VMOflix%20-%20base/iconVMOFLIX-02_afsisx.webp',
+      'https://res.cloudinary.com/dcrfjkvlm/image/upload/v1693886806/iconVMOFLIX-02_afsisx_pqf0zf.webp',
     badge:
-      'https://res.cloudinary.com/nghiemduong2000/image/upload/v1618368062/VMOflix%20Project/VMOflix%20-%20base/iconVMOFLIX-02_afsisx.webp',
+      'https://res.cloudinary.com/dcrfjkvlm/image/upload/v1693886806/iconVMOFLIX-02_afsisx_pqf0zf.webp',
     actions: [
       {
         action: 'Detail',
         title: 'View',
         icon:
-          'https://res.cloudinary.com/nghiemduong2000/image/upload/v1620960184/VMOflix%20Project/VMOflix%20-%20base/preview_see_seen_view_icon-1320168711570288480_nuepvi.webp',
+          'https://res.cloudinary.com/dcrfjkvlm/image/upload/v1693887029/preview_see_seen_view_icon_e0z4xm.webp',
       },
     ],
   };

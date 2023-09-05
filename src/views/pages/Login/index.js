@@ -143,7 +143,7 @@ const Login = (props) => {
           <Link to={isAdmin && isRegister ? '/admin/manage/users' : '/'}>
             <img
               className='h-4rem lg:h-4.5rem'
-              src='https://res.cloudinary.com/nghiemduong2000/image/upload/v1618458158/VMOflix%20Project/VMOflix%20-%20base/VMOFLIX-02-02_bpjidv.webp'
+              src='https://res.cloudinary.com/dcrfjkvlm/image/upload/v1693887959/logoVfilx_whdgzd.png'
               alt='Logo'
             />
           </Link>

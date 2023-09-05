@@ -18,7 +18,7 @@ const LazyLoad = (props) => {
         scrollPosition={scrollPosition}
         src={
           error
-            ? 'https://res.cloudinary.com/nghiemduong2000/image/upload/v1621406568/VMOflix%20Project/VMOflix%20-%20base/488px-No-Image-Placeholder.svg_zn1ra0.png'
+            ? 'https://res.cloudinary.com/dcrfjkvlm/image/upload/v1693888069/no-Image-Placeholder_wpd9qn.png'
             : `${process.env.REACT_APP_BASE_API_PREFIX}${film.poster}`
         }
         wrapperClassName='gallery__link-item gallery-img-wrapper w-full h-full absolute top-0'

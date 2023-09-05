@@ -29,7 +29,7 @@ const HeaderAdmin = (props) => {
             </div>
             <Link className='flex items-center' to='/admin/manage/films'>
               <img
-                src='https://res.cloudinary.com/nghiemduong2000/image/upload/v1618458158/VMOflix%20Project/VMOflix%20-%20base/VMOFLIX-02-02_bpjidv.webp'
+                src='https://res.cloudinary.com/dcrfjkvlm/image/upload/v1693887959/logoVfilx_whdgzd.png'
                 alt='Logo'
                 className='h-2rem lg:h-2.5rem'
               />
