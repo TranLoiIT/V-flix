@@ -2,7 +2,6 @@ import { apiClient } from './SetupAxios';
 
 export const getCategoriesApi = async () => {
   const promise = await apiClient.get('/api/categories');
-  console.log('promise', promise)
   return promise;
 };
 
