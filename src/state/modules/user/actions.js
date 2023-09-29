@@ -11,6 +11,7 @@ import {
 import { createAction } from 'redux-actions';
 import { call, put, takeEvery } from 'redux-saga/effects';
 import types from './types';
+import { CONSTANTS } from 'utils/common';
 
 const { errorActions } = require('../error');
 
@@ -79,6 +80,8 @@ function* loadUserSaga() {
 function* loginSaga(action) {
   try {
     const res = yield call(authUserApi, action.payload);
+    localStorage.setItem(CONSTANTS.ACCESS_TOKEN, res.token);
+    localStorage.setItem(CONSTANTS.TYPE, 'user');
     yield put(loginSuccess(res.data));
     yield put(clearErrors());
   } catch (err) {
@@ -152,6 +155,7 @@ function* registerSaga(action) {
 function* logoutSaga() {
   try {
     yield call(logoutUserApi);
+    localStorage.removeItem(CONSTANTS.ACCESS_TOKEN)
     yield put(logoutSuccess());
   } catch (err) {
     console.log(err);

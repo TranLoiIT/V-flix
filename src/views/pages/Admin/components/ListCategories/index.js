@@ -29,6 +29,7 @@ const ListCategories = (props) => {
         loading: true,
       });
       const responseAll = await getCategoriesApi();
+      console.log('responseAll', responseAll)
       setState((newState) => ({
         ...newState,
         categories: responseAll.data,

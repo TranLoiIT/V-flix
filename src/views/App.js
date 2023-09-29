@@ -2,7 +2,6 @@
 /* eslint-disable max-len */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { createNotificationApi } from 'apis/subscriptionApi';
-import axios from 'axios';
 import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,8 +22,6 @@ import Admin from './pages/Admin';
 import DetailFilm from './pages/DetailFilm';
 import ForgotPassword from './pages/ForgotPassword';
 import Login from './pages/Login';
-
-axios.defaults.baseURL = process.env.REACT_APP_BASE_API_PREFIX;
 
 const App = () => {
   const dispatch = useDispatch();

@@ -1,19 +1,17 @@
-import axios from 'axios';
+import { apiClient } from './SetupAxios';
 
 export const pushNotificationApi = async (slug) => {
-  const promise = await axios.post(
+  const promise = await apiClient.post(
     '/api/subscription/push',
     { slug },
-    { withCredentials: true },
   );
   return promise;
 };
 
 export const createNotificationApi = async (userSubscription) => {
-  const promise = await axios.post(
+  const promise = await apiClient.post(
     '/api/subscription',
     { data: userSubscription },
-    { withCredentials: true },
   );
   return promise;
 };

@@ -37,8 +37,8 @@ const HomePage = (props) => {
     (async function () {
       if (isAuthenticated) {
         try {
-          const responseAll = await getFilmsRecentApi(user.get('history').toJS());
-          setRecent(responseAll.data);
+          // const responseAll = await getFilmsRecentApi(user.get('history').toJS());
+          // setRecent(responseAll.data);
         } catch (error) {
           console.log(error);
         }

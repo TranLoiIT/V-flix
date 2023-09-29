@@ -5,7 +5,7 @@
 import { registerNoResApi } from 'apis/userApi';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import FacebookLogin from 'react-facebook-login';
+// import FacebookLogin from 'react-facebook-login';
 import { GoogleLogin } from '@react-oauth/google';
 import { Helmet } from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
@@ -240,7 +240,7 @@ const Login = (props) => {
                     useOneTap
                   />
                 </div>
-                <div className='flex justify-center mt-5' style={{height: '40px'}}>
+                {/* <div className='flex justify-center mt-5' style={{height: '40px'}}>
                   <div className='bg-blue-facebook rounded-md btn-facebook'>
                     <FacebookLogin
                       appId='761669164547706'
@@ -252,7 +252,7 @@ const Login = (props) => {
                       // cssClass='text-white text-16 bg-blue-facebook flex w-4/5 h-full rounded-md hover:bg-blue-facebook-d'
                     />
                   </div>
-                </div>
+                </div> */}
               </div>
             </>
           ) : null}

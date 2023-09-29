@@ -1,52 +1,39 @@
-import axios from 'axios';
+import { apiClient } from './SetupAxios';
 
 export const getAmountAdminApi = async () => {
-  const promise = await axios.get('/api/admin/amount', {
-    withCredentials: true,
-  });
+  const promise = await apiClient.get('/api/admin/amount');
   return promise;
 };
 
 export const getAdminApi = async () => {
-  const promise = await axios.get('/api/admin', { withCredentials: true });
+  const promise = await apiClient.get('/api/admin');
   return promise;
 };
 
 export const changePwUserByAdminApi = async (id, dataPassword) => {
-  const promise = await axios.patch(`/api/admin/changePw/${id}`, dataPassword, {
-    withCredentials: true,
-  });
+  const promise = await apiClient.patch(`/api/admin/changePw/${id}`, dataPassword);
   return promise;
 };
 
 export const changePwAdminApi = async (dataPassword) => {
-  const promise = await axios.patch('/api/admin/changePwAdmin', dataPassword, {
-    withCredentials: true,
-  });
+  const promise = await apiClient.patch('/api/admin/changePwAdmin', dataPassword);
   return promise;
 };
 
 export const updateAdminApi = async (dataAdmin) => {
-  const promise = await axios.patch('/api/admin/', dataAdmin, {
-    withCredentials: true,
-  });
+  const promise = await apiClient.patch('/api/admin/', dataAdmin);
   return promise;
 };
 
 export const authAdminApi = async ({ loginID, password }) => {
-  const promise = await axios.post(
+  const promise = await apiClient.post(
     '/api/admin/auth',
     { loginID, password },
-    {
-      withCredentials: true,
-    },
   );
   return promise;
 };
 
 export const logoutAdminApi = async () => {
-  const promise = await axios.get('/api/admin/deleteCookie', {
-    withCredentials: true,
-  });
+  const promise = await apiClient.get('/api/admin/deleteCookie');
   return promise;
 };
