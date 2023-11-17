@@ -80,7 +80,7 @@ function* loadUserSaga() {
 function* loginSaga(action) {
   try {
     const res = yield call(authUserApi, action.payload);
-    localStorage.setItem(CONSTANTS.ACCESS_TOKEN, res.token);
+    localStorage.setItem(CONSTANTS.ACCESS_TOKEN, res.data.token);
     localStorage.setItem(CONSTANTS.TYPE, 'user');
     yield put(loginSuccess(res.data));
     yield put(clearErrors());
