@@ -1,10 +1,10 @@
 @import 'assets/styles/theme/mixin';
 
 .banner {
-  @apply overflow-hidden relative h-56.25vw;
+  @apply overflow-hidden relative h-screen;
   &:hover {
     .banner__slider-control {
-      @apply opacity-100 visible;
+      @apply opacity-100;
     }
   }
   &__slider {

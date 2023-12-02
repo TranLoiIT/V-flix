@@ -52,6 +52,8 @@ function* loadAdminSaga() {
     const res = yield call(getAdminApi);
     yield put(adminLoaded(res.data));
   } catch (err) {
+    // const { response } = err;
+    // console.log(response)
     yield put(
       getErrors({
         msg: err.response.data,
@@ -70,7 +72,6 @@ function* loginSaga(action) {
     yield put(loginSuccess(res.data));
     yield put(clearErrors());
   } catch (err) {
-    console.log(err);
     yield put(
       getErrors({
         msg: err.response.data,

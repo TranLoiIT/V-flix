@@ -92,12 +92,6 @@ const FilmListingsByGenre = (props) => {
         genre === 'recent'
           ? 'bg-listFilmAll'
           : genre === 'all'
-          ? isAuthenticated
-            ? user.get('history').toJS().length === 0
-              ? 'bg-listFilmAll'
-              : null
-            : 'bg-listFilmAll'
-          : null
       }`}
       {...handlers(slide)}
     >

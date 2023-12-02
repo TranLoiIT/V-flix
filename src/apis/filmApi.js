@@ -13,7 +13,7 @@ export const getAFilmAndRelated = async (slug) => {
 };
 
 export const getFilmsRecentApi = async (history) => {
-  const promise = await apiClient.post(
+  const promise = await apiClient.get(
     `${path}/recent`,
     { history },
   );

@@ -32,6 +32,9 @@ import './style.scss';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { toast } from 'react-toastify';
 import { AiOutlineClose } from "react-icons/ai";
+import { TYPE_TOAS_MESSAGE } from 'constant';
+import ValidURL from 'utils/validateURL';
+import { FaAngleLeft } from "react-icons/fa";
 
 const CreateEditFilm = () => {
   const history = useHistory();
@@ -76,76 +79,122 @@ const CreateEditFilm = () => {
   const [validate, setValidate] = useState('');
   const [msg, setMsg] = useState('');
 
-  useEffect(() => {
-    if (!isAddFilmPage) {
-      const getFilm = async () => {
-        try {
-          setState({
-            ...state,
-            loading: true,
-          });
-          const response = await getAFilmApi(slug);
-          const currentFilm = response.data;
-          setState((newState) => ({
-            ...newState,
-            ...currentFilm,
-            loading: false,
-          }));
-        } catch (err) {
-          console.log(err);
-        }
-      };
-
-      getFilm();
-    }
-    // eslint-disable-next-line
-  }, []);
-
-  const progressData = async () => {
+  const getFilm = async () => {
+    setState({
+      ...state,
+      loading: true,
+    });
     try {
-      const dataUpload = {
-        title: state.title,
-        description: state.description,
-        poster: state.poster,
-        actor: state.actor.split(',').map((item) => item.trim().toLowerCase()),
-        genre: state.genre,
-        ...(isAddFilmPage && {episodes: state.episodes}),
-      };
-
-      if (isAddFilmPage) {
-        setState({
-          ...state,
-          updating: true,
-        });
-        await addFilmApi(dataUpload);
-        setState({
-          ...state,
-          updating: false,
-        });
-        history.push({
-          pathname: '/admin/manage/films',
-          state: 'add'
-        });
-        await pushNotificationApi(state.titleSlug);
-      } else {
-        setState({
-          ...state,
-          updating: true,
-        });
-        await updateFilmApi(state._id, dataUpload);
-        setState({
-          ...state,
-          updating: false,
-        });
-        history.push({
-          pathname: '/admin/manage/films',
-          state: 'update'
-        });
+      const response = await getAFilmApi(slug);
+      const { data } = response;
+      const convertActor = (data?.actor || []).toString();
+      const newData = {
+        ...data,
+        actor: convertActor,
+        loading: false,
       }
-      setValidate('');
+      setState(newData);
     } catch (err) {
       console.log(err);
+      setState({
+        ...state,
+        loading: false,
+      });
     }
+  };
+
+  const toastMessage = (type = TYPE_TOAS_MESSAGE.SUCCESS, message = '', time = 5000) => {
+    toast[type](message, {
+      position: "top-right",
+      autoClose: time,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+  }
+
+  const addFilm = async (dataUpload) => {
+    try {
+      const res = await addFilmApi(dataUpload);
+      history.push({
+        pathname: '/admin/manage/films',
+        state: 'add'
+      });
+      toastMessage(TYPE_TOAS_MESSAGE.SUCCESS, 'Thêm phim thành công!');
+      // await pushNotificationApi(state.titleSlug);
+    } catch (error) {
+      const { response } = error;
+      toastMessage(TYPE_TOAS_MESSAGE.ERROR, response.data.error, 5000);
+    } finally {
+      setState({
+        ...state,
+        updating: false,
+      });
+    }
+  }
+
+  const updatFilm = async (dataUpload) => {
+    try {
+      const converDataUpLoad = {
+        ...dataUpload,
+        ...{poster: !ValidURL(dataUpload.poster) && dataUpload.poster}
+      }
+      const res = await updateFilmApi(state._id, dataUpload);
+      history.push({
+        pathname: '/admin/manage/films',
+        state: 'update'
+      });
+      toastMessage(TYPE_TOAS_MESSAGE.SUCCESS, 'Cập nhập phim thành công!');
+    } catch (error) {
+      const { response } = error;
+      toastMessage(TYPE_TOAS_MESSAGE.ERROR, response.data.error, 5000);
+    } finally {
+      setState({
+        ...state,
+        updating: false,
+      });
+    }
+  }
+
+  const progressData = () => {
+    // convert data to server
+    const dataUpload = {
+      title: state.title,
+      description: state.description,
+      poster: state.poster,
+      actor: state.actor.split(',').map((item) => item.trim().toLowerCase()),
+      genre: state.genre,
+      ...(isAddFilmPage && {episodes: state.episodes}),
+    };
+
+    // set loading
+    setState({
+      ...state,
+      updating: true,
+    });
+
+    // check call api upload
+    if (isAddFilmPage) {
+      addFilm(dataUpload)
+    } else {
+      // check image upload
+      let converDataUpLoad = {};
+      if (ValidURL(dataUpload.poster)) {
+        converDataUpLoad = {
+          actor: dataUpload.actor,
+          description: dataUpload.description,
+          genre: dataUpload.genre,
+          title: dataUpload.title,
+        };
+      } else {
+        converDataUpLoad = dataUpload;
+      }
+      updatFilm(converDataUpLoad)
+    }
+    setValidate('');
   };
 
   const handleSubmit = (e) => {
@@ -175,19 +224,6 @@ const CreateEditFilm = () => {
     value: item.genre,
     label: item.vn,
   }));
-
-  const toastMessage = (type = 'sucess', message = '', time = 5000) => {
-    toast[type](message, {
-      position: "top-right",
-      autoClose: time,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-    });
-  }
 
   const addEpisodeFilm = () => {
     const newData = {
@@ -230,20 +266,33 @@ const CreateEditFilm = () => {
         updating: true,
       });
       const data = {
-        ...(formFilm?.title !== currentFormFilm.title && {title: formFilm?.title}),
-        ...(formFilm?.description !== currentFormFilm.description && {description: formFilm?.description}),
-        ...(formFilm?.video !== currentFormFilm.video && {video: formFilm?.video}),
+        title: formFilm?.title.trim(),
+        description: formFilm?.description.trim(),
+        video: formFilm?.video.trim(),
         episode: formFilm?.episode || '',
       }
       const res = await updateEpisode(id, data);
+      let currentEpisode = state.episodes;
+      const indexEpisode = currentEpisode.findIndex(item => item._id === id);
+      currentEpisode[indexEpisode] = {
+        ...currentEpisode[indexEpisode],
+        ...data,
+      };
+      setState({
+        ...state,
+        episodes: currentEpisode,
+        updating: false,
+      });
       toastMessage('success', 'Cập nhập tập phim thành công!');
     } catch (error) {
-      toastMessage('error', 'Cập nhập tập phim không thành công!');
-    } finally {
+      const { response } = error;
+      toastMessage(TYPE_TOAS_MESSAGE.ERROR, response.data.error, 5000);
       setState({
         ...state,
         updating: false,
       });
+    } finally {
+      setFormFilm(null);
       setIsUpdate(false);
     }
   }
@@ -319,6 +368,13 @@ const CreateEditFilm = () => {
   }
 
   useEffect(() => {
+    if (!isAddFilmPage) {
+      getFilm();
+    }
+    // eslint-disable-next-line
+  }, []);  
+
+  useEffect(() => {
     if (formFilm && currentFormFilm) {
       if (JSON.stringify(formFilm) !== JSON.stringify(currentFormFilm)) {
         setDisableBtnUpdate(false);
@@ -329,7 +385,7 @@ const CreateEditFilm = () => {
       setDisableBtnUpdate(true);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(formFilm), JSON.stringify(currentFormFilm)])
+  }, [JSON.stringify(formFilm), JSON.stringify(currentFormFilm)]);
 
   return (
     <>
@@ -360,12 +416,24 @@ const CreateEditFilm = () => {
             />
           </div>
           <form
-            onSubmit={handleSubmit}
+            // onSubmit={handleSubmit}
             className='createReview__form z-1 bg-black-body bg-opacity-80 py-6 px-4 sm:py-24 sm:px-24 flex flex-col mt-10rem mb-10rem w-11/12 lg:w-90rem'
           >
-            <h3 className='text-24 sm:text-30 text-white font-bold mb-4 sm:mb-10'>
-              {isAddFilmPage ? 'Thêm phim mới' : 'Sửa phim'}
-            </h3>
+
+            <div className='flex justify-start items-center gap-5'>
+              <div
+                className='cursor-pointer'
+                onClick={() => {
+                  history.push('/admin/manage/films');
+                }}
+              >
+                <FaAngleLeft className='text-24 sm:text-30 text-white font-bold mb-4 sm:mb-10' />
+              </div>
+              <h3 className='text-24 sm:text-30 text-white font-bold mb-4 sm:mb-10'>
+                {isAddFilmPage ? 'Thêm phim mới' : 'Sửa phim'}
+              </h3>
+            </div>
+
             {msg ? (
               <div className='mb-8 border-2 border-red-primary rounded-lg text-16 py-4 px-6 text-red-primary'>
                 {msg}
@@ -550,7 +618,7 @@ const CreateEditFilm = () => {
                   <input
                     className='createReview__form-input w-full'
                     placeholder='Tiêu đề  phim'
-                    onChange={(e) => setFormFilm({...formFilm, title: e.target.value.trim()})}
+                    onChange={(e) => setFormFilm({...formFilm, title: e.target.value})}
                     value={formFilm?.title}
                   />
 
@@ -558,7 +626,7 @@ const CreateEditFilm = () => {
                   <input
                     className='createReview__form-input w-full'
                     placeholder='Mô tả phim'
-                    onChange={(e) => setFormFilm({...formFilm, description: e.target.value.trim()})}
+                    onChange={(e) => setFormFilm({...formFilm, description: e.target.value})}
                     value={formFilm?.description}
                   />
 
@@ -566,7 +634,7 @@ const CreateEditFilm = () => {
                   <input
                     className='createReview__form-input w-full'
                     placeholder='URL video'
-                    onChange={(e) => setFormFilm({...formFilm, video: e.target.value.trim()})}
+                    onChange={(e) => setFormFilm({...formFilm, video: e.target.value})}
                     value={formFilm?.video}
                   />
                   
@@ -641,7 +709,8 @@ const CreateEditFilm = () => {
               />
             </label>
             <button
-              type='submit'
+              type='button'
+              onClick={(e) => handleSubmit(e)}
               className='text-white bg-red-primary text-16 font-bold py-6 rounded-md mt-8 text-center hover:bg-red-primary-d transition duration-200'
             >
               {isAddFilmPage ? 'Thêm phim' : 'Sửa phim'}

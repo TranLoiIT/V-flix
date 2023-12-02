@@ -5,8 +5,8 @@ export const getUserApi = async () => {
   return promise;
 };
 
-export const getUsersFilterApi = async (filter) => {
-  const promise = await apiClient.get(`/api/user/filter${filter}`);
+export const getUsersFilterApi = async (filter, status) => {
+  const promise = await apiClient.get(`/api/user/filter${filter}${status}`);
   return promise;
 };
 
@@ -76,3 +76,18 @@ export const resetPasswordApi = async (resetLink, newPassword) => {
   );
   return promise;
 };
+
+export const deleteSoftUSer = async (id) => {
+  const promise = await apiClient.delete(`/api/user/soft/${id}`);
+  return promise;
+}
+
+export const deleteHartUser = async (id) => {
+  const promise = await apiClient.delete(`/api/user/${id}`);
+  return promise;
+}
+
+export const updateHistoryByUser = async (data) => {
+  const promise = await apiClient.post('/api/user/history', data);
+  return promise;
+}

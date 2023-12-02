@@ -26,8 +26,6 @@ const Admin = (props) => {
   // Get data from store
   useEffect(() => {
     dispatch(adminActions.loadAdmin());
-    // console.log('1', 1)
-    // console.log('2', 2)
     // eslint-disable-next-line
   }, []);
 
@@ -58,7 +56,7 @@ const Admin = (props) => {
             />
           </div>
           <SidebarAdmin />
-          <div className='flex-1 pb-20 relative'>
+          <div className='flex-1 pb-20 relative' style={{minHeight: 'calc(100vh - 68px)'}}>
             <AmountAdmin flag={flag} />
             <Switch>
               <PrivateAdminRoute

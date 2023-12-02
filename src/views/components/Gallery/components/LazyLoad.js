@@ -5,7 +5,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 const LazyLoad = (props) => {
   const {scrollPosition, film} = props;
   const [error, setError] = useState(false);
-  
+
   return (
     <div>
       <LazyLoadImage
@@ -19,12 +19,12 @@ const LazyLoad = (props) => {
         src={
           error
             ? 'https://res.cloudinary.com/dcrfjkvlm/image/upload/v1693888069/no-Image-Placeholder_wpd9qn.png'
-            : `${process.env.REACT_APP_BASE_API_PREFIX}${film.poster}`
+            : film.poster
         }
         wrapperClassName='gallery__link-item gallery-img-wrapper w-full h-full absolute top-0'
         onError={() => setError(true)}
       />
-      {film.poster}
+      {/* {film.poster} */}
     </div>
   );
 };

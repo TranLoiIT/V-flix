@@ -18,13 +18,13 @@ import Navbar from 'views/components/Navbar';
 import RatingStar from 'views/components/RatingStar';
 import ReviewFilm from 'views/components/ReviewFilm';
 import './style.scss';
+import { updateHistoryByUser } from 'apis/userApi';
 
 const DetailFilm = () => {
   const { slug } = useParams();
-  const { pathname } = useLocation();
   const dispatch = useDispatch();
   const [currentFilm, setCurrentFilm] = useState({});
-  const [episode, setEpisode] = useState({});
+  const [episode, setEpisode] = useState(null);
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
   const [scrolling, setScrolling] = useState(false);
@@ -40,37 +40,23 @@ const DetailFilm = () => {
     setScrolling(window.scrollY !== 0);
   };
 
-  const handleUpdateHistoryUser = (filmData) => {
-    const limitHistory = user.get('history').toJS();
-    if (limitHistory.length === 9) {
-      limitHistory.pop();
+  const handleUpdateHistoryByUser = async (idEsiode) => {
+    try {
+      setLoading(true);
+      const data = { episodeId: idEsiode };
+      const res = await updateHistoryByUser(data);
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false);
     }
-
-    const filterHistory = limitHistory.filter(
-      (item) => item.filmId !== filmData._id,
-    );
-    dispatch(
-      userActions.updateUser({
-        id: user.get('_id'),
-        dataUser: {
-          history: [
-            { filmId: filmData._id, date: Date.now() },
-            ...filterHistory,
-          ],
-        },
-      }),
-    );
-  };
+  }
 
   useEffect(() => {
     window.addEventListener('scroll', listenScrollEvent);
     const getFilm = async () => {
       const response = await getAFilmAndRelated(slug);
       setCurrentFilm(response.data.film);
-      setEpisode(response.data.film.episodes[0])
-      if (isAuthenticated) {
-        handleUpdateHistoryUser(response.data.film);
-      }
       setRelated(response.data.related);
       setLoading(false);
     };
@@ -84,8 +70,6 @@ const DetailFilm = () => {
   const handleUpdateFilm = (dataUpdate) => {
     setCurrentFilm(dataUpdate);
   };
-
-  console.log('episode', episode)
 
   return (
     <>
@@ -111,9 +95,9 @@ const DetailFilm = () => {
                 <BiArrowBack />
               </Link>
               {
-                (!loading && episode?.url) && (
+                (!loading && episode?.video) && (
                   <ReactPlayer
-                    url={episode?.url}
+                    url={episode?.video}
                     controls
                     playing
                     width='100%'
@@ -124,16 +108,21 @@ const DetailFilm = () => {
             </div>
             <div className='detailFilm__info container mt-10 mx-auto flex mb-6rem flex-wrap'>
               <div className='detailFilm__info-left flex-1 mb-20rem xl:mr-20 mx-4% lg:mx-0'>
+                {/* // thêm breacrum */}
                 <div className='detailFilm__info-left-top flex items-start mb-16'>
-                  <div className='w-1/4 relative mr-10'>
-                    <div className='p-film'>
-                      <img
-                        className='absolute object-cover top-0 left-0 w-full h-full'
-                        src={`${process.env.REACT_APP_BASE_API_PREFIX}${currentFilm.poster}`}
-                        alt='poster'
-                      />
-                    </div>
-                  </div>
+                  {
+                    !episode && (
+                      <div className='w-1/4 relative mr-10'>
+                        <div className='p-film'>
+                          <img
+                            className='absolute object-cover top-0 left-0 w-full h-full'
+                            src={currentFilm.poster}
+                            alt='poster'
+                          />
+                        </div>
+                      </div>
+                    )
+                  }
                   <div className='flex-1'>
                     <h2 className='text-20 sm:text-40 font-bold text-white mb-2'>
                       {currentFilm.title}
@@ -153,7 +142,7 @@ const DetailFilm = () => {
                               100
                         }
                       />
-                      <div className='detailFilm__info-left-top-share '>
+                      {/* <div className='detailFilm__info-left-top-share '>
                         <FacebookButton
                           url={`https://vmoflix-vn.web.app/${pathname}`}
                           appId='761669164547706'
@@ -162,7 +151,7 @@ const DetailFilm = () => {
                           <SiFacebook className='mr-2' />
                           Chia sẻ
                         </FacebookButton>
-                      </div>
+                      </div> */}
                     </div>
                     <div className='text-16 mb-2 mt-10'>
                       <strong className='text-gray-primary'>Diễn viên:</strong>
@@ -229,12 +218,8 @@ const DetailFilm = () => {
                           key={item._id}
                           onClick={() => {
                             if (item._id !== episode?._id) {
-                              console.log('item', item)
-                              setLoading(true);
-                              setTimeout(() => {
-                                setEpisode({...item});
-                                setLoading(false);
-                              }, 1500);
+                              handleUpdateHistoryByUser(item._id)
+                              setEpisode({...item});
                             }
                           }}
                         >
@@ -254,16 +239,22 @@ const DetailFilm = () => {
               <div className='detailFilm__info-right w-full xl:w-1/4'>
                 {window.innerWidth >= 1280 ? (
                   <>
-                    <h3 className='text-white text-30 font-bold mb-10'>
-                      Phim liên quan
-                    </h3>
-                    <List
-                      numItemPerList={2}
-                      margin='25px'
-                      films={related}
-                      className='flex-wrap'
-                      related
-                    />
+                    {
+                      !loading && (
+                        <>
+                          <h3 className='text-white text-30 font-bold mb-10'>
+                            Phim liên quan
+                          </h3>
+                          <List
+                            numItemPerList={2}
+                            margin='25px'
+                            films={related}
+                            className='flex-wrap'
+                            related
+                          />
+                        </>
+                      )
+                    }
                   </>
                 ) : (
                   <FilmListingsByGenre

@@ -29,7 +29,6 @@ const ListFilms = (props) => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
 
   // Get data from store
   useEffect(() => {
@@ -65,17 +64,17 @@ const ListFilms = (props) => {
     // eslint-disable-next-line
   }, [state.flag, state.genreFilter]);
 
-  useEffect(() => {
-    if (isUpdated) {
-      setMessage(
-        isUpdated === 'update'
-          ? 'Cập nhật phim thành công'
-          : 'Tạo phim thành công',
-      );
-      setLoading(true);
-    }
-    // eslint-disable-next-line
-  }, []);
+  // useEffect(() => {
+  //   if (isUpdated) {
+  //     // setMessage(
+  //     //   isUpdated === 'update'
+  //     //     ? 'Cập nhật phim thành công'
+  //     //     : 'Tạo phim thành công',
+  //     // );
+  //     setLoading(true);
+  //   }
+  //   // eslint-disable-next-line
+  // }, []);
 
   const handleFlag = () => {
     setState({
@@ -134,27 +133,6 @@ const ListFilms = (props) => {
         <title>Admin - Quản lý phim</title>
       </Helmet>
 
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        open={loading}
-        autoHideDuration={6000}
-        onClose={() => setLoading(!loading)}
-        message={(
-          <div className='flex items-center mr-10'>
-            <FcCheckmark className='text-20 leading-20' />
-            <span className='text-20 ml-4'>{message}</span>
-          </div>
-        )}
-        action={(
-          <TiDeleteOutline
-            className='pr-4 text-30 text-red-primary leading-20 cursor-pointer'
-            onClick={() => setLoading(false)}
-          />
-        )}
-      />
       <FilterAdmin
         sortData={state.sortFilms}
         handleData={handleFilms}
@@ -206,7 +184,7 @@ const ListFilms = (props) => {
               <tbody>
                 {state.films.map((film, index) => {
                   return (
-                    <RowTableFilms key={film._id} film={film} isBin={isBin} index={index} handleFlag={handleFlag} setMessage={setMessage} setLoading={setLoading} />
+                    <RowTableFilms key={film._id} film={film} isBin={isBin} index={index} handleFlag={handleFlag} setLoading={setLoading} />
                   );
                 })}
               </tbody>

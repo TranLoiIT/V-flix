@@ -9,15 +9,36 @@ import { Loading } from 'utils/Loadable';
 import Banner from 'views/components/Banner';
 import FilmListingsByGenre from 'views/components/FilmListingsByGenre';
 import './style.scss';
+import { getCategoriesApi } from 'apis/categoryApi';
 
 const HomePage = (props) => {
   const [data, setData] = useState([]);
   const [recent, setRecent] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [listCategory, setListCategory] = useState([])
   const isAuthenticated = useSelector((state) =>
     userSelectors.isAuthenticated(state),
   );
   const user = useSelector((state) => userSelectors.user(state));
+
+  const getDataCate = async () => {
+    try {
+      setLoading(true);
+      const responseAll = await getCategoriesApi();
+      setListCategory([
+        { genre: 'all' },
+        ...responseAll.data
+      ]);
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getDataCate();
+  }, []);
 
   useEffect(() => {
     (async function () {
@@ -37,8 +58,8 @@ const HomePage = (props) => {
     (async function () {
       if (isAuthenticated) {
         try {
-          // const responseAll = await getFilmsRecentApi(user.get('history').toJS());
-          // setRecent(responseAll.data);
+          const responseAll = await getFilmsRecentApi();
+          setRecent(responseAll.data);
         } catch (error) {
           console.log(error);
         }
@@ -59,7 +80,7 @@ const HomePage = (props) => {
           <div className='home pb-20'>
             <Banner films={data} />
             <div className='filmListingsByGenre__wrap -mt-8rem md:-mt-14rem 2xl:-mt-30rem'>
-              {isAuthenticated && user.get('history').toJS().length !== 0 ? (
+              {isAuthenticated ? (
                 <FilmListingsByGenre filmsFilter={recent} genre='recent' />
               ) : null}
               {[

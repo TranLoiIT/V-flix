@@ -111,10 +111,10 @@ const Banner = (props) => {
                 >
                   <img
                     className='w-full h-4/5 object-cover'
-                    src={`${process.env.REACT_APP_BASE_API_PREFIX}${poster}`}
+                    src={poster}
                     alt='banner'
                   />
-                  <div className='opacity-0 banner__slider-item-over flex-col justify-end bg-black absolute w-full h-full top-0 bg-opacity-60 pl-8rem pb-35rem transition duration-300 group-hover:opacity-100 hidden xl:flex'>
+                  <div className='opacity-0 banner__slider-item-over flex-col justify-end absolute w-full h-full top-0 bg-opacity-60 pl-8rem pb-35rem transition duration-300 group-hover:opacity-100 hidden xl:flex'>
                     <h2 className='text-56 text-white font-bold w-80rem leading-65 mb-4'>
                       {film.title}
                     </h2>
@@ -154,7 +154,7 @@ const Banner = (props) => {
           >
             <FaChevronRight />
           </button>
-          <ul className='banner__slider-control-indicators'>
+          {/* <ul className='banner__slider-control-indicators'>
             {(films?.slice(0, 4) || []).map((_item, index) => {
               return (
                 <li key={index} className='banner__slider-control-dot'>
@@ -166,7 +166,7 @@ const Banner = (props) => {
                 </li>
               );
             })}
-          </ul>
+          </ul> */}
         </div>
       </div>
     </>

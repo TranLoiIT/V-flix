@@ -1,19 +1,20 @@
 import { Modal } from '@material-ui/core';
 import { deleteFilmApi, deleteSoftFilmApi, restoreFilmApi } from 'apis/filmApi';
+import { TYPE_TOAS_MESSAGE } from 'constant';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { FaEdit, FaTrashAlt, FaTrashRestore } from 'react-icons/fa';
 import { MdRemoveCircle } from 'react-icons/md';
 import { VscClose } from 'react-icons/vsc';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { categoriesSelectors } from 'state/modules/categories';
 import capitalizeFirstLetter from 'utils/capitalizeFirstLetter';
+import { toastMessage } from 'utils/toastMessage';
 
 const RowTableFilms = (props) => {
-  const { film, isBin, index, handleFlag, setMessage, setLoading } = props;
-  const { posterFilm, title, titleSearch, actor, genre, description } = film;
+  const { film, isBin, index, handleFlag, setLoading } = props;
+  const { poster, title, titleSearch, actor, genre, description } = film;
   const categories = useSelector((state) =>
     categoriesSelectors.categories(state),
   ).toJS();
@@ -29,10 +30,17 @@ const RowTableFilms = (props) => {
         "softDelete": false
       });
       setTimeout(() => handleFlag(), 500);
-      setMessage(`Đã khôi phục phim ${data.title}`);
+      toastMessage({
+        type: TYPE_TOAS_MESSAGE.SUCCESS,
+        message: `Đã khôi phục phim ${data.title}`,
+      });
       setLoading(true);
     } catch (err) {
-      console.log(err);
+      const { response } = err
+      toastMessage({
+        type: TYPE_TOAS_MESSAGE.ERROR,
+        message: response.data.error,
+      })
     }
   };
 
@@ -45,18 +53,26 @@ const RowTableFilms = (props) => {
           lastSlug: id,
         });
         setTimeout(() => handleFlag(), 500);
-        setMessage(
-          'Đã chuyển phim vào thùng rác (Truy cập thùng rác để khôi phục)',
-        );
+        toastMessage({
+          type: TYPE_TOAS_MESSAGE.SUCCESS,
+          message: 'Đã chuyển phim vào thùng rác (Truy cập thùng rác để khôi phục)',
+        })
         setLoading(true);
       } else {
         await deleteFilmApi(id);
         setTimeout(() => handleFlag(), 500);
-        setMessage('Phim đã bị xóa vĩnh viễn');
+        toastMessage({
+          type: TYPE_TOAS_MESSAGE.SUCCESS,
+          message: 'Phim đã bị xóa vĩnh viễn',
+        })
         setLoading(true);
       }
     } catch (err) {
-      console.log(err);
+      const { response } = err
+      toastMessage({
+        type: TYPE_TOAS_MESSAGE.ERROR,
+        message: response.data.error,
+      })
     }
   };
 
@@ -90,7 +106,7 @@ const RowTableFilms = (props) => {
           <h3 className='text-30 text-red-primary mt-6 pb-4 font-bold'>
             CẢNH BÁO
           </h3>
-          <span className='text-20 text-white mb-16 block w-85% text-center text-red-primary'>
+          <span className='text-20 mb-16 block w-85% text-center text-red-primary'>
             Hành động xóa này không thể khôi phục cân nhắc trước khi xóa
           </span>
           <span className='text-20 text-white mb-10 text-center'>
@@ -107,14 +123,9 @@ const RowTableFilms = (props) => {
       </Modal>
       <td className='text-center pl-3rem pt-4'>{index + 1}</td>
       <td className=''>
-        <div className='p-film block relative left-1/2 transform -translate-x-1/2'>
-          <LazyLoadImage
-            alt={posterFilm}
-            effect='blur'
-            src={posterFilm}
-            wrapperClassName='listFilms__table--img w-full h-full absolute top-0 left-0'
-          />
-        </div>
+        {/* <div className='relative left-1/2 transform -translate-x-1/2'> */}
+        <img src={poster} alt='image-poster' className='object-cover w-4/5' style={{ height: 240 }}  />
+        {/* </div> */}
       </td>
       <td className='h-18rem overflow-y-auto'>
         <span className='block mb-2'>
@@ -188,7 +199,6 @@ RowTableFilms.propTypes = {
   isBin: PropTypes.bool.isRequired,
   index: PropTypes.number.isRequired,
   handleFlag: PropTypes.func.isRequired,
-  setMessage: PropTypes.func.isRequired,
   setLoading: PropTypes.func.isRequired
 }
 
