@@ -3,13 +3,10 @@ import { getAFilmAndRelated } from 'apis/filmApi';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { BiArrowBack } from 'react-icons/bi';
-import { SiFacebook } from 'react-icons/si';
 import ReactPlayer from 'react-player';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { FacebookButton } from 'react-social';
 import { categoriesSelectors } from 'state/modules/categories';
-import { userActions, userSelectors } from 'state/modules/user';
 import capitalizeFirstLetter from 'utils/capitalizeFirstLetter';
 import { Loading } from 'utils/Loadable';
 import FilmListingsByGenre from 'views/components/FilmListingsByGenre';
@@ -19,19 +16,27 @@ import RatingStar from 'views/components/RatingStar';
 import ReviewFilm from 'views/components/ReviewFilm';
 import './style.scss';
 import { updateHistoryByUser } from 'apis/userApi';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+
+const dataBreadcrum = [{url: '/', label: 'trang chủ'}];
+
+function useQuery() {
+  const { search } = useLocation();
+
+  return React.useMemo(() => new URLSearchParams(search), [search]);
+}
 
 const DetailFilm = () => {
   const { slug } = useParams();
-  const dispatch = useDispatch();
+  const loacation = useLocation()
+  const history = useHistory();
+  const query = useQuery();
   const [currentFilm, setCurrentFilm] = useState({});
   const [episode, setEpisode] = useState(null);
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
   const [scrolling, setScrolling] = useState(false);
-  const user = useSelector((state) => userSelectors.user(state));
-  const isAuthenticated = useSelector((state) =>
-    userSelectors.isAuthenticated(state),
-  );
+  const [dataBCR, setDataBCR] = useState([]);
   const categories = useSelector((state) =>
     categoriesSelectors.categories(state),
   ).toJS();
@@ -44,7 +49,7 @@ const DetailFilm = () => {
     try {
       setLoading(true);
       const data = { episodeId: idEsiode };
-      const res = await updateHistoryByUser(data);
+      await updateHistoryByUser(data);
     } catch (error) {
       console.log(error)
     } finally {
@@ -52,24 +57,81 @@ const DetailFilm = () => {
     }
   }
 
+  const getFilm = async () => {
+    try {
+      setLoading(true);
+      const response = await getAFilmAndRelated(slug);
+      const { data } = response;
+      setCurrentFilm(data.film);
+      setRelated(data.related);
+      let newBCR = dataBreadcrum;
+      if (loacation.search !== '') {
+        const getEpisode = Number(query.get('episode'));
+        console.log(getEpisode)
+        newBCR = [
+          ...dataBreadcrum,
+          {url: location.pathname, label: data.film.title},
+          {label: `tập ${getEpisode}`}
+        ]
+        setEpisode(data.film.episodes[getEpisode-1]);
+      } else {
+        newBCR = [
+          ...dataBreadcrum,
+          {label: data.film.title},
+        ];
+        setEpisode(null);
+      }
+      setDataBCR(newBCR);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     window.addEventListener('scroll', listenScrollEvent);
-    const getFilm = async () => {
-      const response = await getAFilmAndRelated(slug);
-      setCurrentFilm(response.data.film);
-      setRelated(response.data.related);
-      setLoading(false);
-    };
     getFilm();
     return () => {
       window.removeEventListener('scroll', listenScrollEvent);
     };
     // eslint-disable-next-line
-  }, [slug]);
+  }, [slug, loacation.search]);
 
   const handleUpdateFilm = (dataUpdate) => {
     setCurrentFilm(dataUpdate);
   };
+
+  const renderBreadcrumbs = (data = []) => {
+    return (
+      <div className='flex items-center h-full gap-5'>
+        {
+          data.map((item, index) => (
+            <div key={`${index + 1}`} className='flex items-start'>
+              {
+                item.url ? (
+                  <Link
+                    to={item.url}
+                    type='button'
+                    className='text-red-600 cursor-pointer font-medium text-20 capitalize max-w-xs truncate'
+                  >
+                    {`${item.label}`}
+                  </Link>
+                ) : (
+                  <div className='text-white font-medium text-20 capitalize max-w-xs truncate'>{`${item.label}`}</div>
+                )
+              }
+              {
+                index + 1 < data?.length && (
+                  <div className='font-medium text-20 text-white ml-5'>/</div>
+                )
+              }
+            </div>
+          ))
+        }
+      </div>
+    );
+  }
 
   return (
     <>
@@ -82,20 +144,25 @@ const DetailFilm = () => {
         <Loading />
       ) : (
         <>
+          <div className='flex justify-center py-12'>
+            <div className='container'>
+              {renderBreadcrumbs(dataBCR)}
+            </div>
+          </div>
           <div className='detailFilm w-full overflow-hidden'>
             <Navbar
               addClass={`transform ${scrolling ? null : '-translate-y-full'}`}
             />
-            <div className='group bg-black '>
-              <Link
-                to='/'
-                type='button'
-                className='absolute z-1 bg-transparent text-white text-30 lg:text-50 top-1rem lg:top-5rem left-1rem lg:left-5rem opacity-100 xl:opacity-0 group-hover:opacity-100'
-              >
-                <BiArrowBack />
-              </Link>
-              {
-                (!loading && episode?.video) && (
+            { (!loading && episode?.video) && (
+              <div className='group bg-black relative'>
+                <Link
+                  to='/'
+                  type='button'
+                  className='absolute top-2 left-2 z-1 bg-transparent text-white text-30 lg:text-50 opacity-100 xl:opacity-0 group-hover:opacity-100'
+                >
+                  <BiArrowBack />
+                </Link>
+                <div className='py-12'>
                   <ReactPlayer
                     url={episode?.video}
                     controls
@@ -103,12 +170,11 @@ const DetailFilm = () => {
                     width='100%'
                     height={window.innerWidth >= 1280 ? '100vh' : '56.25vw'}
                   />
-                )
-              }
-            </div>
+                </div>
+              </div>
+            )}
             <div className='detailFilm__info container mt-10 mx-auto flex mb-6rem flex-wrap'>
               <div className='detailFilm__info-left flex-1 mb-20rem xl:mr-20 mx-4% lg:mx-0'>
-                {/* // thêm breacrum */}
                 <div className='detailFilm__info-left-top flex items-start mb-16'>
                   {
                     !episode && (
@@ -144,8 +210,8 @@ const DetailFilm = () => {
                       />
                       {/* <div className='detailFilm__info-left-top-share '>
                         <FacebookButton
-                          url={`https://vmoflix-vn.web.app/${pathname}`}
-                          appId='761669164547706'
+                          // url={`https://vmoflix-vn.web.app/${pathname}`}
+                          // appId='761669164547706'
                           className='flex items-center bg-blue-facebook py-0.25rem px-1rem text-14 text-white ml-10 rounded-md'
                         >
                           <SiFacebook className='mr-2' />
@@ -218,7 +284,10 @@ const DetailFilm = () => {
                           key={item._id}
                           onClick={() => {
                             if (item._id !== episode?._id) {
-                              handleUpdateHistoryByUser(item._id)
+                              history.push({
+                                search: `?episode=${item.episode}`,
+                              });
+                              handleUpdateHistoryByUser(item._id);
                               setEpisode({...item});
                             }
                           }}

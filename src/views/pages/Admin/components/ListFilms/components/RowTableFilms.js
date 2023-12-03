@@ -26,7 +26,7 @@ const RowTableFilms = (props) => {
 
   const handleRestore = async (data) => {
     try {
-      const res = await restoreFilmApi(data._id, {
+      await restoreFilmApi(data._id, {
         "softDelete": false
       });
       setTimeout(() => handleFlag(), 500);

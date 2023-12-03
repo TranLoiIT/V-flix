@@ -1,4 +1,4 @@
-import { Modal, Switch, withStyles } from '@material-ui/core';
+import { Switch, withStyles } from '@material-ui/core';
 import { updateUserApi } from 'apis/userApi';
 import dateFormat from 'dateformat';
 import PropTypes from 'prop-types';

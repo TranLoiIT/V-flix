@@ -1,12 +1,10 @@
 /* eslint-disable indent */
 /* eslint-disable func-names */
-import { Modal, Snackbar } from '@material-ui/core';
+import { Modal } from '@material-ui/core';
 import { deleteHartUser, deleteSoftUSer, getUsersFilterApi, updateUserApi } from 'apis/userApi';
 import queryString from 'query-string';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { FcCheckmark } from 'react-icons/fc';
-import { TiDeleteOutline } from 'react-icons/ti';
 import { VscClose } from 'react-icons/vsc';
 import { Link } from 'react-router-dom';
 import { Loading } from 'utils/Loadable';
@@ -81,11 +79,11 @@ const ListUsers = (props) => {
   const handleDeleteUser = async () => {
     try {
       setLoading(true);
-      const res = await deleteHartUser(userDelete._id, {
+       await deleteHartUser(userDelete._id, {
         softDelete: false
       });
       let currentUser = state.users;
-      currentUser = currentUser.filter(item => item._id !== userDelete._id)
+      currentUser = currentUser.filter((item) => item._id !== userDelete._id)
       setState({
         ...state,
         users: currentUser
@@ -109,11 +107,11 @@ const ListUsers = (props) => {
   const handleResortUser = async (data) => {
     try {
       setLoading(true);
-      const res = await updateUserApi(data._id, {
+      await updateUserApi(data._id, {
         softDelete: false
       });
       let currentUser = state.users;
-      currentUser = currentUser.filter(item => item._id !== data._id)
+      currentUser = currentUser.filter((item) => item._id !== data._id)
       setState({
         ...state,
         users: currentUser
@@ -136,9 +134,9 @@ const ListUsers = (props) => {
   const handleRemoveUser = async (data) => {
     try {
       setLoading(true);
-      const res = await deleteSoftUSer(data._id);
+      await deleteSoftUSer(data._id);
       let currentUser = state.users;
-      currentUser = currentUser.filter(item => item._id !== data._id)
+      currentUser = currentUser.filter((item) => item._id !== data._id)
       setState({
         ...state,
         users: currentUser

@@ -8,8 +8,8 @@ import { NEXT, PREV } from 'assets/variables/dir';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import { useSelector } from 'react-redux';
-import { userSelectors } from 'state/modules/user';
+// import { useSelector } from 'react-redux';
+// import { userSelectors } from 'state/modules/user';
 import handlers from 'utils/handlersSwipe';
 import responsive from 'utils/responsive';
 import CarouselContainer from '../CarouselContainer';
@@ -40,10 +40,10 @@ const listProcess = (data, numItemPerList) => {
 const FilmListingsByGenre = (props) => {
   const { numItemPerList, margin } = responsive();
   const { genre, filmsFilter } = props;
-  const isAuthenticated = useSelector((state) =>
-    userSelectors.isAuthenticated(state),
-  );
-  const user = useSelector((state) => userSelectors.user(state));
+  // const isAuthenticated = useSelector((state) =>
+  //   userSelectors.isAuthenticated(state),
+  // );
+  // const user = useSelector((state) => userSelectors.user(state));
 
   const listFilmsProcessed = listProcess(filmsFilter, numItemPerList);
   const numItems = listFilmsProcessed.length;

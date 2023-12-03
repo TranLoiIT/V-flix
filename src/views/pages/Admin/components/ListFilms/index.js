@@ -1,12 +1,9 @@
 /* eslint-disable indent */
 /* eslint-disable func-names */
-import { Snackbar } from '@material-ui/core';
 import { getFilmsFilterApi } from 'apis/filmApi';
 import queryString from 'query-string';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { FcCheckmark } from 'react-icons/fc';
-import { TiDeleteOutline } from 'react-icons/ti';
 import { Link, useLocation } from 'react-router-dom';
 import { Loading } from 'utils/Loadable';
 import FilterAdmin from '../FilterAdmin';
@@ -15,7 +12,7 @@ import RowTableFilms from './components/RowTableFilms';
 import './style.scss';
 
 const ListFilms = (props) => {
-  const { pathname, state: isUpdated } = useLocation();
+  const { pathname } = useLocation();
 
   const isBin = pathname.indexOf('bin') !== -1;
 
@@ -161,7 +158,7 @@ const ListFilms = (props) => {
             </Link>
           </div>
         </div>
-        {state.loading ? (
+        {loading ? (
           <Loading />
         ) : (
           <div className='listFilms__wrapTable h-70rem'>

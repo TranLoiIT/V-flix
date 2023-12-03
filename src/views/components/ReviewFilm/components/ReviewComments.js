@@ -6,7 +6,7 @@ const ReviewComments = (props) => {
   const { reviews } = props;
 
   return (
-    <div className='reviewFilm__comments'>
+    <div className='reviewFilm__comments' style={{ maxHeight: 640, overflow: 'auto' }}>
       {reviews.length > 0 ? (
         reviews.map((review) => (
           <div

@@ -90,8 +90,8 @@ const ListCategories = (props) => {
         }
         await updateCategoryApi(formEdit._id || 0, data);
 
-        let currentCategory = state.categories;
-        const idxCategory = currentCategory.findIndex(item => item._id === formEdit?._id);
+        const currentCategory = state.categories;
+        const idxCategory = currentCategory.findIndex((item) => item._id === formEdit?._id);
         currentCategory[idxCategory] = {
           ...currentCategory[idxCategory],
           ...data,
@@ -136,7 +136,7 @@ const ListCategories = (props) => {
     try {
       if (validation(formEdit.genre.trim(), formEdit.vn.trim())) {
         await deleteCategoryApi(formEdit._id);
-        let currentCategory = state.categories.filter(item => item?._id !== formEdit?._id)
+        const currentCategory = state.categories.filter((item) => item?._id !== formEdit?._id)
         setTimeout(() => {
           setState({
             ...state,
@@ -228,7 +228,7 @@ const ListCategories = (props) => {
                   </thead>
                   <tbody>
                     {state.categories.map((category, index) => {
-                      const { genre, vn, _id } = category;
+                      const { genre, vn } = category;
                       return (
                         <tr key={category._id}>
                           <td>{index + 1}</td>

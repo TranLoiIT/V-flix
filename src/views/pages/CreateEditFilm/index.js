@@ -16,7 +16,6 @@ import {
   updateEpisode,
   updateFilmApi
 } from 'apis/filmApi';
-import { pushNotificationApi } from 'apis/subscriptionApi';
 import { stylesSelectCreateEditFilm } from 'assets/styles/stylesMaterialUI/stylesSelect';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
@@ -77,7 +76,6 @@ const CreateEditFilm = () => {
   }
 
   const [validate, setValidate] = useState('');
-  const [msg, setMsg] = useState('');
 
   const getFilm = async () => {
     setState({
@@ -118,7 +116,7 @@ const CreateEditFilm = () => {
 
   const addFilm = async (dataUpload) => {
     try {
-      const res = await addFilmApi(dataUpload);
+      await addFilmApi(dataUpload);
       history.push({
         pathname: '/admin/manage/films',
         state: 'add'
@@ -138,11 +136,11 @@ const CreateEditFilm = () => {
 
   const updatFilm = async (dataUpload) => {
     try {
-      const converDataUpLoad = {
-        ...dataUpload,
-        ...{poster: !ValidURL(dataUpload.poster) && dataUpload.poster}
-      }
-      const res = await updateFilmApi(state._id, dataUpload);
+      // const converDataUpLoad = {
+      //   ...dataUpload,
+      //   ...{poster: !ValidURL(dataUpload.poster) && dataUpload.poster}
+      // }
+      await updateFilmApi(state._id, dataUpload);
       history.push({
         pathname: '/admin/manage/films',
         state: 'update'
@@ -208,15 +206,12 @@ const CreateEditFilm = () => {
           state.actor,
         ) &&
         state.genre.length > 0 &&
-        state.episodes.length > 0 &&
-        !msg
+        state.episodes.length > 0
       ) {
         progressData();
       } else {
         setValidate('Vui lòng điền đúng tất cả ô trống');
       }
-    } else if (!msg) {
-      progressData();
     }
   };
 
@@ -271,9 +266,9 @@ const CreateEditFilm = () => {
         video: formFilm?.video.trim(),
         episode: formFilm?.episode || '',
       }
-      const res = await updateEpisode(id, data);
-      let currentEpisode = state.episodes;
-      const indexEpisode = currentEpisode.findIndex(item => item._id === id);
+      await updateEpisode(id, data);;
+      const currentEpisode = state.episodes;
+      const indexEpisode = currentEpisode.findIndex((item) => item._id === id);
       currentEpisode[indexEpisode] = {
         ...currentEpisode[indexEpisode],
         ...data,
@@ -433,12 +428,6 @@ const CreateEditFilm = () => {
                 {isAddFilmPage ? 'Thêm phim mới' : 'Sửa phim'}
               </h3>
             </div>
-
-            {msg ? (
-              <div className='mb-8 border-2 border-red-primary rounded-lg text-16 py-4 px-6 text-red-primary'>
-                {msg}
-              </div>
-            ) : null}
             {!validate ? null : (
               <div className='mb-8 border-2 border-red-primary rounded-lg text-16 py-4 px-6 text-red-primary'>
                 {validate}

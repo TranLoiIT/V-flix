@@ -19,15 +19,17 @@ const HomePage = (props) => {
   const isAuthenticated = useSelector((state) =>
     userSelectors.isAuthenticated(state),
   );
-  const user = useSelector((state) => userSelectors.user(state));
+  // const user = useSelector((state) => userSelectors.user(state));
 
   const getDataCate = async () => {
     try {
       setLoading(true);
       const responseAll = await getCategoriesApi();
+      const convertData = responseAll.data.map((item) => ({ id: item._id, genre: item.genre }));
+      // console.log(convertData);
       setListCategory([
         { genre: 'all' },
-        ...responseAll.data
+        ...convertData,
       ]);
     } catch (error) {
       console.log(error)
@@ -83,23 +85,16 @@ const HomePage = (props) => {
               {isAuthenticated ? (
                 <FilmListingsByGenre filmsFilter={recent} genre='recent' />
               ) : null}
-              {[
-                'all',
-                'drama',
-                'fantasy',
-                'action',
-                'adventure',
-                'mystery',
-              ].map((item, index) => {
+              {listCategory.map((item, index) => {
                 return (
                   <FilmListingsByGenre
                     filmsFilter={data.filter((film) => {
-                      if (item === 'all') {
+                      if (item.genre === 'all') {
                         return true;
                       }
-                      return film.genre.indexOf(item) !== -1;
+                      return film.genre.indexOf(item.genre) !== -1;
                     })}
-                    genre={item}
+                    genre={item.genre}
                     key={index}
                   />
                 );

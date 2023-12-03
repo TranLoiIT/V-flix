@@ -101,18 +101,18 @@ const Login = (props) => {
     console.log(res);
   };
 
-  const responseFacebook = async (res) => {
-    try {
-      dispatch(
-        userActions.loginFacebook({
-          accessToken: res.accessToken,
-          userID: res.userID,
-        }),
-      );
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // const responseFacebook = async (res) => {
+  //   try {
+  //     dispatch(
+  //       userActions.loginFacebook({
+  //         accessToken: res.accessToken,
+  //         userID: res.userID,
+  //       }),
+  //     );
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   return (
     <>

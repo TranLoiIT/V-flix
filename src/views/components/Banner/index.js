@@ -11,8 +11,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   FaChevronLeft,
   FaChevronRight,
-  FaRegCircle,
-  FaRegDotCircle,
 } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import handlers from 'utils/handlersSwipe';

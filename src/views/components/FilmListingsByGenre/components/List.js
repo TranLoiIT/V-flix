@@ -31,9 +31,11 @@ const List = (props) => {
     setCurrentFilm(film);
   };
 
+  console.log(currentFilm)
+
   return (
     <ul
-      className={`filmListingsByGenre__list flex-1 flex flex-listFilm ${className}`}
+      className={`filmListingsByGenre__list flex flex-listFilm ${className}`}
       style={{
         order,
       }}
@@ -45,28 +47,32 @@ const List = (props) => {
         aria-describedby='simple-modal-description'
         className='overflow-auto pb-4rem'
       >
-        <div className='filmListingsByGenre__modalFilm absolute top-4rem left-1/2 transform -translate-x-1/2 bg-black-body flex items-center flex-col w-4/5 sm:w-3/4 2xl:w-1/2 overflow-hidden rounded-2xl outline-none relative mb-4rem'>
+        <div className='filmListingsByGenre__modalFilm absolute top-4.5rem left-1/2 transform -translate-x-1/2 bg-black-body flex items-center flex-col w-4/5 sm:w-3/4 2xl:w-1/2 overflow-hidden rounded-2xl outline-none mb-4rem'>
           <div className='filmListingsByGenre__modalFilm-main p-previewFilm w-full absolute'>
-            <ReactPlayer
-              url={currentFilm.trailerURL}
-              playing
-              loop
-              muted={muted}
-              style={{
-                position: 'absolute',
-                top: 0,
-                right: 0,
-              }}
-              width='100%'
-              height='100%'
-              config={{
-                trailer: {
-                  playerVars: {
-                    fs: 0,
-                  },
-                },
-              }}
-            />
+            {
+              currentFilm?.episodes && (
+                <ReactPlayer
+                  url={currentFilm?.episodes[0]?.video}
+                  playing
+                  loop
+                  muted={muted}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                  }}
+                  width='100%'
+                  height='100%'
+                  config={{
+                    trailer: {
+                      playerVars: {
+                        fs: 0,
+                      },
+                    },
+                  }}
+                />
+              )
+            }
           </div>
           <div className='filmListingsByGenre__modalFilm-main-cover z-1 bg-coverModalFilm p-previewFilm w-full relative'>
             <h3 className='text-30 2xl:text-40 text-white font-bold w-50rem absolute left-4rem bottom-16rem'>

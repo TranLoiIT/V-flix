@@ -1,15 +1,14 @@
-import { Snackbar } from '@material-ui/core';
 import { updateFilmApi } from 'apis/filmApi';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import { FcCheckmark } from 'react-icons/fc';
-import { TiDeleteOutline } from 'react-icons/ti';
 import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { userSelectors } from 'state/modules/user';
 import { v4 as uuidv4 } from 'uuid';
 import RatingStar from 'views/components/RatingStar';
 import ReviewComments from './ReviewComments';
+import { toastMessage } from 'utils/toastMessage';
+import { TYPE_TOAS_MESSAGE } from 'constant';
 
 const ReviewWrite = (props) => {
   const { currentFilm, handleUpdateFilm } = props;
@@ -53,7 +52,10 @@ const ReviewWrite = (props) => {
         });
 
         await updateFilmApi(currentFilm._id, { reviews: newReviews });
-
+        toastMessage({
+          type: TYPE_TOAS_MESSAGE.SUCCESS,
+          message: 'Đã gửi bình luận thành công!'
+        });
         handleUpdateFilm({ ...currentFilm, reviews: newReviews });
         setState({
           ...state,
@@ -65,39 +67,16 @@ const ReviewWrite = (props) => {
         setError('Vui lòng nhập sao và bình luận');
       }
     } catch (err) {
-      console.log(err);
+      const { response } = err;
+      toastMessage({
+        type: TYPE_TOAS_MESSAGE.ERROR,
+        message: response.data.error
+      });
     }
   };
 
   return (
     <div className='reviewFilm__write'>
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        open={state.loading}
-        autoHideDuration={6000}
-        onClose={() => setState({
-          ...state,
-          loading: false
-        })}
-        message={(
-          <div className='flex items-center mr-10'>
-            <FcCheckmark className='text-20 leading-20' />
-            <span className='text-20 ml-4'>Bình luận đã được gửi</span>
-          </div>
-        )}
-        action={(
-          <TiDeleteOutline
-            className='pr-4 text-30 text-red-primary leading-20 cursor-pointer'
-            onClick={() => setState({
-              ...state,
-              loading: false
-            })}
-          />
-        )}
-      />
       <div className='reviewFilm__write-form'>
         <h4>Bình luận</h4>
         {isAuthenticated ? (
